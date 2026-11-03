@@ -1,0 +1,53 @@
+:root {
+  color-scheme: light;
+
+  --background: #f5efdf;
+  --surface: #fffaf0;
+  --surface-raised: #ffffff;
+  --surface-muted: #ece6d6;
+
+  --text: #303b32;
+  --text-muted: #70766b;
+  --border: #dcd4bf;
+
+  --primary: #496b52;
+  --on-primary: #ffffff;
+  --primary-soft: #e3ebdc;
+
+  --accent: #93681d;
+  --accent-soft: #f5e8bd;
+
+  --coral: #ad5545;
+  --coral-soft: #fae4db;
+
+  --shadow: 0 8px 28px rgb(65 55 30 / 5%);
+  --radius: 18px;
+
+  --font-body: "Trebuchet MS", Arial, sans-serif;
+  --font-heading: "Palatino Linotype", "Book Antiqua", Georgia, serif;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #101626;
+  --surface: #192235;
+  --surface-raised: #202c42;
+  --surface-muted: #253149;
+
+  --text: #f4eedc;
+  --text-muted: #adb7ca;
+  --border: #344158;
+
+  --primary: #e7bc62;
+  --on-primary: #191d29;
+  --primary-soft: #373225;
+
+  --accent: #f0c977;
+  --accent-soft: #373225;
+
+  --coral: #f29b8b;
+  --coral-soft: #402b35;
+
+  --shadow: 0 8px 28px rgb(0 0 0 / 15%);
+}
