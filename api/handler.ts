@@ -2,6 +2,10 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { app } from "../apps/api/src/app.js";
 import { connectDatabase } from "../apps/api/src/config/database.js";
 
+type VercelIncomingMessage = IncomingMessage & {
+  query?: Record<string, unknown>;
+};
+
 let connectionPromise: Promise<void> | undefined;
 
 function ensureDatabaseConnection(): Promise<void> {
@@ -15,10 +19,29 @@ function ensureDatabaseConnection(): Promise<void> {
   return connectionPromise;
 }
 
+function removeRoutingParameter(request: IncomingMessage): void {
+  const url = new URL(request.url ?? "/", "https://questrealm.invalid");
+
+  if (url.searchParams.has("path")) {
+    url.searchParams.delete("path");
+
+    request.url = `${url.pathname}${url.search}`;
+  }
+
+  // Vercel may also expose a previously parsed query object.
+  const runtimeQuery = (request as VercelIncomingMessage).query;
+
+  if (runtimeQuery && typeof runtimeQuery === "object") {
+    Reflect.deleteProperty(runtimeQuery, "path");
+  }
+}
+
 export default async function handler(
   request: IncomingMessage,
   response: ServerResponse,
 ): Promise<void> {
+  removeRoutingParameter(request);
+
   try {
     await ensureDatabaseConnection();
   } catch {
