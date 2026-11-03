@@ -1,6 +1,19 @@
 import "dotenv/config";
 import { z } from "zod";
 
+const vercelHost =
+  process.env.VERCEL_ENV === "preview"
+    ? process.env.VERCEL_URL
+    : process.env.VERCEL_PROJECT_PRODUCTION_URL;
+
+const inferredWebOrigin =
+  process.env.VERCEL === "1" && vercelHost
+    ? `https://${vercelHost}`
+    : undefined;
+
+const localWebOrigin =
+  process.env.NODE_ENV !== "production" ? "http://localhost:5173" : undefined;
+
 const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "test", "production"])
@@ -11,7 +24,6 @@ const envSchema = z.object({
   WEB_ORIGIN: z
     .string()
     .url()
-    .default("http://localhost:5173")
     .transform((value) => new URL(value).origin),
 
   MONGODB_URI: z
@@ -25,7 +37,12 @@ const envSchema = z.object({
     ),
 });
 
-const result = envSchema.safeParse(process.env);
+const result = envSchema.safeParse({
+  ...process.env,
+
+  WEB_ORIGIN:
+    process.env.WEB_ORIGIN?.trim() || inferredWebOrigin || localWebOrigin,
+});
 
 if (!result.success) {
   console.error("Invalid environment configuration:");
