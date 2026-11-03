@@ -5,6 +5,7 @@ export type Task = {
   title: string;
   kind: "daily" | "once";
   difficulty: "easy" | "medium" | "hard";
+  isCompleted: boolean;
   createdAt: string;
 };
 
@@ -16,6 +17,20 @@ export type TasksResponse = {
   };
   meta: {
     nextCursor: string | null;
+  };
+};
+
+export type TaskCompletion = {
+  taskId: string;
+  occurrenceKey: string;
+  completedAt: string;
+  reward: {
+    xp: number;
+    gold: number;
+  };
+  balance: {
+    xp: number;
+    gold: number;
   };
 };
 
@@ -41,6 +56,16 @@ export async function createTask(input: CreateTaskInput): Promise<Task> {
   });
 
   return response.data.task;
+}
+
+export async function completeTask(id: string): Promise<TaskCompletion> {
+  const response = await apiRequest<{
+    data: TaskCompletion;
+  }>(`/tasks/${encodeURIComponent(id)}/complete`, {
+    method: "POST",
+  });
+
+  return response.data;
 }
 
 export async function deleteTask(id: string): Promise<void> {
