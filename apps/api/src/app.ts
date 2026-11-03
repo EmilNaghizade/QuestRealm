@@ -7,6 +7,7 @@ import { pingDatabase } from "./config/database.js";
 import { AppError } from "./lib/app-error.js";
 import { errorHandler } from "./middleware/error-handler.js";
 import { authRouter } from "./modules/auth/auth.routes.js";
+import { characterRouter } from "./modules/character/character.routes.js";
 
 export const app = express();
 
@@ -60,6 +61,7 @@ app.get("/api/v1/ready", async (_request, response, next) => {
 });
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/characters", characterRouter);
 
 app.use((_request, _response, next) => {
   next(

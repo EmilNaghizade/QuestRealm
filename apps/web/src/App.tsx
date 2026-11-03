@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AuthScreen from "./features/auth/AuthScreen";
 import Dashboard from "./features/dashboard/Dashboard";
+import ChooseCharacter from "./features/character/ChooseCharacter";
 import {
   getCurrentUser,
   logout,
@@ -22,6 +23,11 @@ export default function App() {
   const [retryCount, setRetryCount] = useState(0);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState("");
+
+  const handleSessionExpired = useCallback(() => {
+    setLogoutError("");
+    setSession({ status: "anonymous" });
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -150,7 +156,28 @@ export default function App() {
         </button>
       </div>
 
-      <Dashboard />
+      {session.user.characterId === null ? (
+        <ChooseCharacter
+          onSessionExpired={handleSessionExpired}
+          onSelected={(characterId) => {
+            setSession((current) => {
+              if (current.status !== "authenticated") {
+                return current;
+              }
+
+              return {
+                status: "authenticated",
+                user: {
+                  ...current.user,
+                  characterId,
+                },
+              };
+            });
+          }}
+        />
+      ) : (
+        <Dashboard />
+      )}
     </>
   );
 }
