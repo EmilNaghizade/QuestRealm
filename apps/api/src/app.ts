@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -66,6 +67,22 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/characters", characterRouter);
 app.use("/api/v1/tasks", taskRouter);
 app.use("/api/v1/focus", focusRouter);
+
+if (env.NODE_ENV === "production") {
+  const webDirectory = fileURLToPath(
+    new URL("../../web/dist/", import.meta.url),
+  );
+
+  app.use(
+    express.static(webDirectory, {
+      index: "index.html",
+      dotfiles: "ignore",
+      setHeaders(response) {
+        response.setHeader("Cache-Control", "no-cache");
+      },
+    }),
+  );
+}
 
 app.use((_request, _response, next) => {
   next(
