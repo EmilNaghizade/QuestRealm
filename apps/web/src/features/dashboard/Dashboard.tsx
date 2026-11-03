@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { AuthUser } from "../auth/auth-api";
 import { getCharacters, type Character } from "../character/character-api";
+import TasksPanel from "../tasks/TasksPanel";
 import { ApiError } from "../../lib/api";
 
 type Theme = "light" | "dark";
@@ -278,37 +279,7 @@ export default function Dashboard({ user, onSessionExpired }: DashboardProps) {
             </p>
           </section>
 
-          <section
-            className="card quests-card"
-            id="quests"
-            aria-labelledby="quests-title"
-          >
-            <div className="section-heading">
-              <div>
-                <p className="eyebrow">One step at a time</p>
-                <h2 id="quests-title">Your quests</h2>
-              </div>
-
-              <span className="badge badge-muted">Coming next</span>
-            </div>
-
-            <div className="character-summary">
-              <span className="quest-marker" aria-hidden="true">
-                ◇
-              </span>
-
-              <div>
-                <h3>A fresh page for your next adventure.</h3>
-                <p className="muted">
-                  Quest creation and completion are coming next.
-                </p>
-              </div>
-            </div>
-
-            <p className="section-footnote">
-              Complete quests to earn XP and gold for your realm.
-            </p>
-          </section>
+          <TasksPanel onSessionExpired={onSessionExpired} />
         </div>
 
         <footer className="page-footer">
