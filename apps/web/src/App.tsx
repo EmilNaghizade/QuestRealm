@@ -176,7 +176,10 @@ export default function App() {
           }}
         />
       ) : (
-        <Dashboard />
+        <Dashboard
+          user={session.user}
+          onSessionExpired={handleSessionExpired}
+        />
       )}
     </>
   );
