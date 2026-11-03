@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { env } from "./config/env.js";
+import { pingDatabase } from "./config/database.js";
 import { AppError } from "./lib/app-error.js";
 import { errorHandler } from "./middleware/error-handler.js";
 
@@ -27,6 +28,33 @@ app.get("/api/v1/health", (_request, response) => {
       service: "questrealm-api",
     },
   });
+});
+
+app.get("/api/v1/ready", async (_request, response, next) => {
+  try {
+    const databaseReady = await pingDatabase();
+
+    if (!databaseReady) {
+      next(
+        new AppError(
+          503,
+          "DATABASE_UNAVAILABLE",
+          "The service is temporarily unavailable.",
+        ),
+      );
+
+      return;
+    }
+
+    response.status(200).json({
+      data: {
+        status: "ready",
+        database: "connected",
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use((_request, _response, next) => {
