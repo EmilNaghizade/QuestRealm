@@ -1,6 +1,18 @@
-import { Schema, model, type InferSchemaType } from "mongoose";
+import { Schema, model } from "mongoose";
 
-const userSchema = new Schema(
+export interface UserRecord {
+  displayName: string;
+  email: string;
+  passwordHash: string;
+  timeZone: string;
+  characterId: string | null;
+  xp: number;
+  gold: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const userSchema = new Schema<UserRecord>(
   {
     displayName: {
       type: String,
@@ -73,6 +85,4 @@ userSchema.index(
   },
 );
 
-export type UserRecord = InferSchemaType<typeof userSchema>;
-
-export const User = model("QuestRealmV2User", userSchema);
+export const User = model<UserRecord>("QuestRealmV2User", userSchema);
