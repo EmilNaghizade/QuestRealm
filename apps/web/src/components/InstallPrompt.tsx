@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import "./install-prompt.css";
 
 type InstallPromptEvent = Event & {
@@ -10,26 +10,46 @@ type InstallPromptEvent = Event & {
 };
 
 function isStandalone(): boolean {
-  const navigatorWithStandalone = navigator as Navigator & {
+  const browserNavigator = navigator as Navigator & {
     standalone?: boolean;
   };
 
   return (
     window.matchMedia("(display-mode: standalone)").matches ||
-    navigatorWithStandalone.standalone === true
+    browserNavigator.standalone === true
+  );
+}
+
+function isAppleMobile(): boolean {
+  return (
+    /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (/Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1)
   );
 }
 
 export default function InstallPrompt() {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const installingRef = useRef(false);
+
   const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(
     null,
   );
   const [installed, setInstalled] = useState(isStandalone);
-  const [dismissed, setDismissed] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
   const [error, setError] = useState("");
+  const [appleMobile] = useState(isAppleMobile);
 
-  const installingRef = useRef(false);
+  const dialogId = useId();
+  const titleId = useId();
+
+  const openInstructions = useCallback(() => {
+    const dialog = dialogRef.current;
+
+    if (!dialog || dialog.open) return;
+
+    setError("");
+    dialog.showModal();
+  }, []);
 
   useEffect(() => {
     const displayMode = window.matchMedia("(display-mode: standalone)");
@@ -38,32 +58,39 @@ export default function InstallPrompt() {
       if (isStandalone()) return;
 
       event.preventDefault();
-
       setInstallEvent(event as InstallPromptEvent);
-      setDismissed(false);
       setError("");
     }
 
     function handleInstalled() {
+      dialogRef.current?.close();
       setInstalled(true);
       setInstallEvent(null);
       setError("");
     }
 
     function handleDisplayModeChange() {
-      setInstalled(isStandalone());
+      const standalone = isStandalone();
+
+      if (standalone) {
+        dialogRef.current?.close();
+      }
+
+      setInstalled(standalone);
     }
 
     window.addEventListener("beforeinstallprompt", handleInstallPrompt);
     window.addEventListener("appinstalled", handleInstalled);
+    window.addEventListener("questrealm:open-install", openInstructions);
     displayMode.addEventListener("change", handleDisplayModeChange);
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleInstallPrompt);
       window.removeEventListener("appinstalled", handleInstalled);
+      window.removeEventListener("questrealm:open-install", openInstructions);
       displayMode.removeEventListener("change", handleDisplayModeChange);
     };
-  }, []);
+  }, [openInstructions]);
 
   async function handleInstall() {
     if (!installEvent || installingRef.current) return;
@@ -74,70 +101,130 @@ export default function InstallPrompt() {
     setIsInstalling(true);
     setError("");
 
+    dialogRef.current?.close();
+
     try {
       await currentEvent.prompt();
 
       const choice = await currentEvent.userChoice;
 
+      setInstallEvent(null);
+
       if (choice.outcome === "accepted") {
         setInstalled(true);
       }
-
-      // Each browser installation event can only be used once.
-      setInstallEvent(null);
     } catch {
       setInstallEvent(null);
-      setError(
-        "Installation could not start. You can also use your browser’s install option.",
-      );
+      setError("Use your browser’s menu to add QuestRealm to your device.");
+
+      if (dialogRef.current && !dialogRef.current.open) {
+        dialogRef.current.showModal();
+      }
     } finally {
       installingRef.current = false;
       setIsInstalling(false);
     }
   }
 
-  if (installed || dismissed || (!installEvent && !error)) {
-    return null;
-  }
+  if (installed) return null;
 
   return (
-    <section className="install-prompt" aria-labelledby="install-prompt-title">
+    <>
       <button
-        className="install-prompt-dismiss"
+        className="install-launcher"
         type="button"
-        aria-label="Dismiss installation suggestion"
+        aria-haspopup="dialog"
+        aria-controls={dialogId}
         disabled={isInstalling}
-        onClick={() => setDismissed(true)}
+        onClick={openInstructions}
       >
-        <span aria-hidden="true">×</span>
+        <span aria-hidden="true">↓</span>
+        Install app
       </button>
 
-      <span className="install-prompt-icon" aria-hidden="true">
-        Q
-      </span>
+      <dialog
+        ref={dialogRef}
+        id={dialogId}
+        className="install-dialog"
+        aria-labelledby={titleId}
+      >
+        <div className="install-dialog-heading">
+          <span className="install-dialog-mark" aria-hidden="true">
+            Q
+          </span>
 
-      <div className="install-prompt-copy">
-        <h2 id="install-prompt-title">Your realm, one tap away.</h2>
+          <button
+            className="install-dialog-close"
+            type="button"
+            aria-label="Close installation guide"
+            autoFocus
+            onClick={() => dialogRef.current?.close()}
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
 
-        <p>Add QuestRealm to your device and open it like an app.</p>
-      </div>
+        <p className="eyebrow">Take your realm with you</p>
+        <h2 id={titleId}>QuestRealm on your home screen</h2>
 
-      {installEvent && (
-        <button
-          className="button button-primary install-prompt-button"
-          type="button"
-          disabled={isInstalling}
-          onClick={() => void handleInstall()}
-        >
-          {isInstalling ? "Opening installer…" : "Install QuestRealm"}
-        </button>
-      )}
-
-      {error && (
-        <p className="install-prompt-error" role="alert">
-          {error}
+        <p className="install-description">
+          Open your quests and focus timer with one tap, directly from your
+          device.
         </p>
-      )}
-    </section>
+
+        {installEvent ? (
+          <button
+            className="button button-primary install-dialog-action"
+            type="button"
+            disabled={isInstalling}
+            onClick={() => void handleInstall()}
+          >
+            {isInstalling ? "Opening installer…" : "Install QuestRealm"}
+          </button>
+        ) : appleMobile ? (
+          <ol className="install-steps">
+            <li>
+              <span aria-hidden="true">1</span>
+              <p>
+                Open your browser’s <strong>Share</strong> menu.
+              </p>
+            </li>
+            <li>
+              <span aria-hidden="true">2</span>
+              <p>
+                Choose <strong>Add to Home Screen</strong>.
+              </p>
+            </li>
+            <li>
+              <span aria-hidden="true">3</span>
+              <p>
+                Keep the name <strong>QuestRealm</strong> and tap{" "}
+                <strong>Add</strong>.
+              </p>
+            </li>
+          </ol>
+        ) : (
+          <div className="install-browser-guide">
+            <p>
+              Open your browser’s menu and look for <strong>Install app</strong>
+              , <strong>Add to Home Screen</strong> or{" "}
+              <strong>Add to Dock</strong>.
+            </p>
+            <p>Available options depend on your browser and device.</p>
+          </div>
+        )}
+
+        {error && (
+          <p className="install-dialog-error" role="alert">
+            {error}
+          </p>
+        )}
+
+        <p className="install-dialog-note">
+          Saving changes and earning quest rewards still require an internet
+          connection.
+        </p>
+      </dialog>
+    </>
   );
 }

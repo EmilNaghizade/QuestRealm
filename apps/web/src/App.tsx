@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import ConnectionStatus from "./components/ConnectionStatus";
 import InstallPrompt from "./components/InstallPrompt";
+import MobileNavigation from "./components/MobileNavigation";
 import AuthScreen from "./features/auth/AuthScreen";
 import Dashboard from "./features/dashboard/Dashboard";
 import ChooseCharacter from "./features/character/ChooseCharacter";
-import FocusProvider from "./features/focus/FocusProviderView";
-import FocusSoundProvider from "./features/focus/FocusSoundProviderView";
+import FocusProvider from "./features/focus/FocusProvider";
+import FocusSoundProvider from "./features/focus/FocusSoundProvider";
 import {
   getCurrentUser,
   logout,
@@ -121,6 +122,7 @@ function AppContent() {
       <main className="session-screen">
         <div className="card session-panel">
           <h1>Let’s reconnect.</h1>
+
           <p className="muted" role="alert">
             {session.message}
           </p>
@@ -191,18 +193,22 @@ function AppContent() {
           }}
         />
       ) : (
-        <FocusProvider
-          key={session.user.id}
-          onSessionExpired={handleSessionExpired}
-        >
-          <FocusSoundProvider>
-            <Dashboard
-              user={session.user}
-              onSessionExpired={handleSessionExpired}
-              onBalanceChanged={handleBalanceChanged}
-            />
-          </FocusSoundProvider>
-        </FocusProvider>
+        <>
+          <MobileNavigation />
+
+          <FocusProvider
+            key={session.user.id}
+            onSessionExpired={handleSessionExpired}
+          >
+            <FocusSoundProvider>
+              <Dashboard
+                user={session.user}
+                onSessionExpired={handleSessionExpired}
+                onBalanceChanged={handleBalanceChanged}
+              />
+            </FocusSoundProvider>
+          </FocusProvider>
+        </>
       )}
     </>
   );
