@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { env } from "./env.js";
 import { User } from "../modules/auth/user.model.js";
 import { Session } from "../modules/auth/session.model.js";
+import { Task } from "../modules/tasks/task.model.js";
 
 mongoose.set("bufferCommands", false);
 mongoose.set("autoCreate", false);
@@ -26,8 +27,9 @@ export async function connectDatabase(): Promise<void> {
 
   await User.createIndexes();
   await Session.createIndexes();
+  await Task.createIndexes();
 
-  console.info("Auth indexes are ready.");
+  console.info("Database indexes are ready.");
 }
 
 export async function disconnectDatabase(): Promise<void> {
