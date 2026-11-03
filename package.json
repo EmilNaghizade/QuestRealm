@@ -10,9 +10,13 @@
   "main": "index.js",
   "scripts": {
     "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=apps/api",
     "build:web": "npm run build --workspace=apps/web",
+    "build:api": "npm run build --workspace=apps/api",
+    "typecheck:api": "npm run typecheck --workspace=apps/api",
     "lint:web": "npm run lint --workspace=apps/web",
-    "preview:web": "npm run preview --workspace=apps/web"
+    "preview:web": "npm run preview --workspace=apps/web",
+    "start:api": "npm run start --workspace=apps/api"
   },
   "keywords": [],
   "type": "commonjs"
