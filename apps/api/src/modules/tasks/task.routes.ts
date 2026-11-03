@@ -9,6 +9,7 @@ import {
   taskIdSchema,
 } from "./task.validation.js";
 import { createTask, deleteTask, listTasks } from "./task.service.js";
+import { completeTask } from "./task-completion.service.js";
 
 export const taskRouter = Router();
 
@@ -103,6 +104,25 @@ taskRouter.post("/", async (request, response, next) => {
 
     response.status(201).json({
       data: { task },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+taskRouter.post("/:taskId/complete", async (request, response, next) => {
+  try {
+    const user = await requireTaskUser(request);
+    const result = taskIdSchema.safeParse(request.params.taskId);
+
+    if (!result.success) {
+      throw new AppError(400, "VALIDATION_ERROR", "Invalid task ID.");
+    }
+
+    const completion = await completeTask(user._id, result.data);
+
+    response.status(200).json({
+      data: completion,
     });
   } catch (error) {
     next(error);

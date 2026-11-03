@@ -5,6 +5,7 @@ export interface TaskRecord {
   title: string;
   kind: "daily" | "once";
   difficulty: "easy" | "medium" | "hard";
+  completionVersion: number;
   deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -36,6 +37,13 @@ const taskSchema = new Schema<TaskRecord>(
       type: String,
       required: true,
       enum: ["easy", "medium", "hard"],
+    },
+
+    completionVersion: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
     },
 
     deletedAt: {
