@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
 const sourcePath = fileURLToPath(
-  new URL("../public/app-icon.svg", import.meta.url),
+  new URL("../public/app-icon.png", import.meta.url),
 );
 
 const outputDirectory = fileURLToPath(
@@ -11,9 +11,9 @@ const outputDirectory = fileURLToPath(
 );
 
 const icons = [
-  { filename: "icon-192.png", size: 192 },
-  { filename: "icon-512.png", size: 512 },
-  { filename: "apple-touch-icon.png", size: 180 },
+  { filename: "icon-192-v3.png", size: 192 },
+  { filename: "icon-512-v3.png", size: 512 },
+  { filename: "apple-touch-icon-v3.png", size: 180 },
 ];
 
 async function generateIcons() {
@@ -27,14 +27,15 @@ async function generateIcons() {
         new URL(`../public/icons/${filename}`, import.meta.url),
       );
 
-      await sharp(source).resize(size, size).png().toFile(outputPath);
+      await sharp(source)
+        .resize(size, size, { fit: "contain" })
+        .flatten({ background: "#f5efdf" })
+        .png()
+        .toFile(outputPath);
     }),
   );
 
-  console.log("QuestRealm icons generated:");
-  for (const icon of icons) {
-    console.log(`- public/icons/${icon.filename} (${icon.size}×${icon.size})`);
-  }
+  console.log("QuestRealm retro icons generated.");
 }
 
 generateIcons().catch((error) => {
