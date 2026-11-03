@@ -1,0 +1,253 @@
+.focus-stats-layout {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+
+.focus-stats-layout > .card {
+  min-width: 0;
+}
+
+.focus-stats-status {
+  margin-top: 18px;
+  font-size: 13px;
+}
+
+.focus-stat-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.focus-stat-card {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-muted);
+}
+
+.focus-stat-label {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.focus-stat-number {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 7px;
+  color: var(--primary);
+  font-family: var(--font-heading);
+  font-size: clamp(26px, 4vw, 38px);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.focus-stat-number small {
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.focus-chart-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 32px;
+}
+
+.focus-chart-heading h3 {
+  font-size: 16px;
+}
+
+.focus-chart-heading .muted {
+  font-size: 11px;
+}
+
+.focus-week-chart {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 12px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.focus-week-day {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.focus-week-value {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.focus-week-track {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  max-width: 48px;
+  height: 160px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface-muted);
+}
+
+.focus-week-bar {
+  width: 100%;
+  border-radius: 8px;
+  background: var(--primary);
+}
+
+.focus-week-day-today .focus-week-bar {
+  background: var(--accent);
+}
+
+.focus-week-label {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.focus-week-day-today .focus-week-label,
+.focus-week-day-today .focus-week-value {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.focus-history-list {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.focus-history-list:empty {
+  margin: 0;
+}
+
+.focus-history-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.focus-history-item:last-child {
+  border-bottom: 0;
+}
+
+.focus-history-icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 17px;
+}
+
+.focus-history-copy {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+
+.focus-history-copy h3 {
+  font-size: 13px;
+}
+
+.focus-history-copy time {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.focus-history-duration {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.focus-history-empty {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: 38px 12px;
+  text-align: center;
+}
+
+.focus-history-empty > span {
+  color: var(--accent);
+  font-size: 38px;
+}
+
+.focus-history-empty h3 {
+  font-size: 17px;
+}
+
+.focus-history-empty p {
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.focus-history-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.focus-stats-layout button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 600px) {
+  .focus-stat-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .focus-stat-card {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .focus-week-chart {
+    gap: 7px;
+  }
+
+  .focus-week-track {
+    height: 130px;
+  }
+
+  .focus-history-item {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .focus-history-copy {
+    flex: 1;
+  }
+}

@@ -1,6 +1,7 @@
 import mongoose, { mongo, Types } from "mongoose";
 import { AppError } from "../../lib/app-error.js";
 import { User } from "../auth/user.model.js";
+import { getProgression } from "../character/progression.js";
 import { Task } from "./task.model.js";
 import { TaskCompletion } from "./task-completion.model.js";
 
@@ -148,6 +149,7 @@ export async function completeTask(userId: Types.ObjectId, taskId: string) {
         balance: {
           xp: updatedUser.xp,
           gold: updatedUser.gold,
+          progression: getProgression(updatedUser.xp),
         },
       };
     });

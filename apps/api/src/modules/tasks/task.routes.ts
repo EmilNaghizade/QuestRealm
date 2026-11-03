@@ -70,7 +70,8 @@ taskRouter.get("/", async (request, response, next) => {
       );
     }
 
-    const page = await listTasks(user._id, result.data.cursor);
+    const { cursor, ...filters } = result.data;
+    const page = await listTasks(user._id, cursor, filters);
 
     response.json(page);
   } catch (error) {

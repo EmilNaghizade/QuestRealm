@@ -3,6 +3,7 @@ import { rateLimit } from "express-rate-limit";
 import { MongoServerError } from "mongodb";
 import { env } from "../../config/env.js";
 import { AppError } from "../../lib/app-error.js";
+import { getProgression } from "../character/progression.js";
 import { User, type UserRecord } from "./user.model.js";
 import { loginSchema, registerSchema } from "./auth.validation.js";
 import { hashPassword, verifyPassword } from "./password.js";
@@ -24,6 +25,7 @@ function publicUser(user: UserRecord & { _id: { toString(): string } }) {
     characterId: user.characterId,
     xp: user.xp,
     gold: user.gold,
+    progression: getProgression(user.xp),
   };
 }
 

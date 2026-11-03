@@ -1,11 +1,18 @@
-import { Types } from "mongoose";
+import { Types, type PipelineStage } from "mongoose";
 import { AppError } from "../../lib/app-error.js";
 import { User } from "../auth/user.model.js";
 import { Task, type TaskRecord } from "./task.model.js";
 import { TaskCompletion } from "./task-completion.model.js";
-import type { CreateTaskInput } from "./task.validation.js";
+import type { CreateTaskInput, ListTasksInput } from "./task.validation.js";
 
 const PAGE_SIZE = 20;
+
+type TaskFilters = Pick<ListTasksInput, "kind" | "difficulty" | "status">;
+
+type ListedTask = TaskRecord & {
+  _id: Types.ObjectId;
+  isCompleted: boolean;
+};
 
 function getLocalDateKey(date: Date, timeZone: string): string {
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -56,7 +63,11 @@ export async function createTask(
   return serializeTask(task, false);
 }
 
-export async function listTasks(userId: Types.ObjectId, cursor?: string) {
+export async function listTasks(
+  userId: Types.ObjectId,
+  cursor?: string,
+  filters: TaskFilters = {},
+) {
   const user = await User.findById(userId).select("timeZone").lean();
 
   if (!user) {
@@ -65,53 +76,101 @@ export async function listTasks(userId: Types.ObjectId, cursor?: string) {
 
   const today = getLocalDateKey(new Date(), user.timeZone);
 
-  const tasks = await Task.find({
-    userId,
-    deletedAt: null,
-    ...(cursor ? { _id: { $lt: new Types.ObjectId(cursor) } } : {}),
-  })
-    .sort({ _id: -1 })
-    .limit(PAGE_SIZE + 1)
-    .lean();
+  const pipeline: PipelineStage[] = [
+    {
+      $match: {
+        userId,
+        deletedAt: null,
+        ...(cursor ? { _id: { $lt: new Types.ObjectId(cursor) } } : {}),
+        ...(filters.kind ? { kind: filters.kind } : {}),
+        ...(filters.difficulty ? { difficulty: filters.difficulty } : {}),
+      },
+    },
+    {
+      $sort: { _id: -1 },
+    },
+  ];
+
+  // Without a completion filter, only inspect the next page.
+  if (!filters.status) {
+    pipeline.push({
+      $limit: PAGE_SIZE + 1,
+    });
+  }
+
+  pipeline.push(
+    {
+      $lookup: {
+        from: TaskCompletion.collection.name,
+        let: {
+          currentTaskId: "$_id",
+          currentOccurrenceKey: {
+            $cond: [{ $eq: ["$kind", "once"] }, "once", today],
+          },
+        },
+        pipeline: [
+          {
+            $match: {
+              userId,
+              $expr: {
+                $and: [
+                  { $eq: ["$taskId", "$$currentTaskId"] },
+                  {
+                    $eq: ["$occurrenceKey", "$$currentOccurrenceKey"],
+                  },
+                ],
+              },
+            },
+          },
+          {
+            $limit: 1,
+          },
+          {
+            $project: { _id: 1 },
+          },
+        ],
+        as: "matchingCompletions",
+      },
+    },
+    {
+      $set: {
+        isCompleted: {
+          $gt: [{ $size: "$matchingCompletions" }, 0],
+        },
+      },
+    },
+  );
+
+  // Apply completion status before pagination.
+  if (filters.status) {
+    pipeline.push(
+      {
+        $match: {
+          isCompleted: filters.status === "completed",
+        },
+      },
+      {
+        $limit: PAGE_SIZE + 1,
+      },
+    );
+  }
+
+  pipeline.push({
+    $project: {
+      matchingCompletions: 0,
+    },
+  });
+
+  const tasks = await Task.aggregate<ListedTask>(pipeline);
 
   const hasMore = tasks.length > PAGE_SIZE;
   const page = tasks.slice(0, PAGE_SIZE);
   const lastTask = page[page.length - 1];
 
-  const completions = page.length
-    ? await TaskCompletion.find({
-        userId,
-        taskId: {
-          $in: page.map((task) => task._id),
-        },
-        occurrenceKey: {
-          $in: ["once", today],
-        },
-      })
-        .select("taskId occurrenceKey")
-        .lean()
-    : [];
-
-  const completedOccurrences = new Set(
-    completions.map(
-      (completion) =>
-        `${completion.taskId.toString()}:${completion.occurrenceKey}`,
-    ),
-  );
-
   return {
     data: {
-      tasks: page.map((task) => {
-        const occurrenceKey = task.kind === "once" ? "once" : today;
-
-        const isCompleted = completedOccurrences.has(
-          `${task._id.toString()}:${occurrenceKey}`,
-        );
-
-        return serializeTask(task, isCompleted);
-      }),
+      tasks: page.map((task) => serializeTask(task, task.isCompleted)),
     },
-
     meta: {
       nextCursor: hasMore && lastTask ? lastTask._id.toString() : null,
     },

@@ -1,10 +1,19 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { ApiError } from "../../lib/api";
-import { createTask, deleteTask, getTasks, type Task } from "./tasks-api";
+import { getCurrentUser, type PlayerBalance } from "../auth/auth-api";
+import {
+  completeTask,
+  createTask,
+  deleteTask,
+  getTasks,
+  type Task,
+  type TaskFilters,
+} from "./tasks-api";
 import "./tasks.css";
 
 type TasksPanelProps = {
   onSessionExpired: () => void;
+  onBalanceChanged: (balance: PlayerBalance) => void;
 };
 
 const difficultyLabels = {
@@ -13,8 +22,12 @@ const difficultyLabels = {
   hard: "Hard",
 };
 
-export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
+export default function TasksPanel({
+  onSessionExpired,
+  onBalanceChanged,
+}: TasksPanelProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [filters, setFilters] = useState<TaskFilters>({});
   const [cursor, setCursor] = useState<string | undefined>();
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [reloadCount, setReloadCount] = useState(0);
@@ -30,25 +43,27 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
 
   const [isCreating, setIsCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [completingId, setCompletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
-  const isBusy = isLoading || isCreating || deletingId !== null;
+  const isBusy =
+    isLoading || isCreating || deletingId !== null || completingId !== null;
+
+  const hasFilters = Boolean(
+    filters.kind || filters.difficulty || filters.status,
+  );
 
   useEffect(() => {
     const controller = new AbortController();
 
     async function loadTasks() {
       try {
-        const response = await getTasks(cursor, controller.signal);
+        const response = await getTasks(cursor, controller.signal, filters);
 
-        if (controller.signal.aborted) {
-          return;
-        }
+        if (controller.signal.aborted) return;
 
         setTasks((current) => {
-          if (!cursor) {
-            return response.data.tasks;
-          }
+          if (!cursor) return response.data.tasks;
 
           const merged = new Map(current.map((task) => [task.id, task]));
 
@@ -62,9 +77,7 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
         setNextCursor(response.meta.nextCursor);
         setLoadError("");
       } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
+        if (controller.signal.aborted) return;
 
         if (error instanceof ApiError && error.status === 401) {
           onSessionExpired();
@@ -86,21 +99,43 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
     void loadTasks();
 
     return () => controller.abort();
-  }, [cursor, reloadCount, onSessionExpired]);
+  }, [cursor, filters, reloadCount, onSessionExpired]);
 
   function refreshFromStart() {
     setIsLoading(true);
     setLoadError("");
+    setTasks([]);
+    setNextCursor(null);
     setCursor(undefined);
     setReloadCount((current) => current + 1);
+  }
+
+  function changeFilters(nextFilters: TaskFilters) {
+    if (isBusy) return;
+
+    setConfirmDeleteId(null);
+    setActionError("");
+    setNotice("");
+    setFilters(nextFilters);
+    refreshFromStart();
+  }
+
+  function markCompleted(id: string) {
+    setTasks((current) => {
+      if (filters.status === "active") {
+        return current.filter((task) => task.id !== id);
+      }
+
+      return current.map((task) =>
+        task.id === id ? { ...task, isCompleted: true } : task,
+      );
+    });
   }
 
   async function handleCreate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (isBusy) {
-      return;
-    }
+    if (isBusy) return;
 
     const cleanTitle = title.trim();
 
@@ -121,7 +156,11 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
       });
 
       setTitle("");
-      setNotice("Your new quest is ready.");
+      setNotice(
+        hasFilters
+          ? "Quest created. Your current filters still apply."
+          : "Your new quest is ready.",
+      );
       setConfirmDeleteId(null);
       refreshFromStart();
     } catch (error) {
@@ -140,10 +179,77 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (isBusy) {
-      return;
+  async function handleComplete(task: Task) {
+    if (isBusy || task.isCompleted) return;
+
+    setCompletingId(task.id);
+    setConfirmDeleteId(null);
+    setActionError("");
+    setNotice("");
+
+    try {
+      const result = await completeTask(task.id);
+
+      markCompleted(task.id);
+      onBalanceChanged(result.balance);
+
+      setNotice(
+        `Quest completed! +${result.reward.xp} XP and ` +
+          `+${result.reward.gold} gold.`,
+      );
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) {
+        onSessionExpired();
+        return;
+      }
+
+      if (
+        error instanceof ApiError &&
+        error.code === "TASK_ALREADY_COMPLETED"
+      ) {
+        markCompleted(task.id);
+        setNotice(
+          "This quest was already completed. No extra reward was added.",
+        );
+
+        try {
+          const user = await getCurrentUser();
+
+          onBalanceChanged({
+            xp: user.xp,
+            gold: user.gold,
+            progression: user.progression,
+          });
+        } catch (syncError) {
+          if (syncError instanceof ApiError && syncError.status === 401) {
+            onSessionExpired();
+            return;
+          }
+
+          setActionError(
+            "Your balance could not be refreshed. Reload to check it.",
+          );
+        }
+
+        return;
+      }
+
+      if (error instanceof ApiError && error.status === 404) {
+        setTasks((current) => current.filter((item) => item.id !== task.id));
+      }
+
+      setActionError(
+        error instanceof ApiError
+          ? error.message
+          : "Unable to complete your quest. Please try again.",
+      );
+    } finally {
+      setCompletingId(null);
     }
+  }
+
+  async function handleDelete(id: string) {
+    if (isBusy) return;
 
     setDeletingId(id);
     setActionError("");
@@ -190,7 +296,17 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
           <h2 id="quests-title">Your quests</h2>
         </div>
 
-        <span className="quest-count">{tasks.length} loaded</span>
+        <button
+          className="button button-secondary"
+          type="button"
+          disabled={isBusy}
+          onClick={() => {
+            setConfirmDeleteId(null);
+            refreshFromStart();
+          }}
+        >
+          Refresh
+        </button>
       </div>
 
       <details className="task-create-panel">
@@ -202,7 +318,6 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
 
             <div className="task-field task-title-field">
               <label htmlFor="task-title">Quest title</label>
-
               <input
                 id="task-title"
                 name="title"
@@ -216,7 +331,6 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
 
             <div className="task-field">
               <label htmlFor="task-kind">Repeat</label>
-
               <select
                 id="task-kind"
                 value={kind}
@@ -231,7 +345,6 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
 
             <div className="task-field">
               <label htmlFor="task-difficulty">Difficulty</label>
-
               <select
                 id="task-difficulty"
                 value={difficulty}
@@ -255,6 +368,78 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
         </form>
       </details>
 
+      <fieldset className="task-form-fields" disabled={isBusy}>
+        <legend className="auth-sr-only">Filter your quests</legend>
+
+        <div className="task-field">
+          <label htmlFor="quest-filter-kind">Quest type</label>
+          <select
+            id="quest-filter-kind"
+            value={filters.kind ?? ""}
+            onChange={(event) =>
+              changeFilters({
+                ...filters,
+                kind: (event.target.value as Task["kind"]) || undefined,
+              })
+            }
+          >
+            <option value="">All types</option>
+            <option value="daily">Daily</option>
+            <option value="once">One-time</option>
+          </select>
+        </div>
+
+        <div className="task-field">
+          <label htmlFor="quest-filter-difficulty">Difficulty</label>
+          <select
+            id="quest-filter-difficulty"
+            value={filters.difficulty ?? ""}
+            onChange={(event) =>
+              changeFilters({
+                ...filters,
+                difficulty:
+                  (event.target.value as Task["difficulty"]) || undefined,
+              })
+            }
+          >
+            <option value="">All difficulties</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+
+        <div className="task-field">
+          <label htmlFor="quest-filter-status">Status</label>
+          <select
+            id="quest-filter-status"
+            value={filters.status ?? ""}
+            onChange={(event) =>
+              changeFilters({
+                ...filters,
+                status:
+                  (event.target.value as "active" | "completed") || undefined,
+              })
+            }
+          >
+            <option value="">All statuses</option>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+
+        <div className="task-field">
+          <button
+            className="button button-secondary"
+            type="button"
+            disabled={!hasFilters}
+            onClick={() => changeFilters({})}
+          >
+            Clear filters
+          </button>
+        </div>
+      </fieldset>
+
       {actionError && (
         <p className="task-error" role="alert">
           {actionError}
@@ -265,38 +450,55 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
         {notice}
       </p>
 
-      {tasks.length === 0 && !isLoading && !loadError && (
+      {tasks.length === 0 && !isLoading && !loadError && !nextCursor && (
         <div className="task-empty">
           <span className="quest-marker" aria-hidden="true">
             ◇
           </span>
-          <h3>Your next adventure starts here.</h3>
-          <p className="muted">Create a small, meaningful quest for today.</p>
+          <h3>
+            {hasFilters
+              ? "No quests match these filters."
+              : "Your next adventure starts here."}
+          </h3>
+          <p className="muted">
+            {hasFilters
+              ? "Try different filters or create a new quest."
+              : "Create a small, meaningful quest for today."}
+          </p>
         </div>
       )}
 
       <ul className="quest-list task-list">
         {tasks.map((task) => (
-          <li className="quest-item" key={task.id}>
+          <li
+            className={`quest-item ${
+              task.isCompleted ? "task-item-completed" : ""
+            }`}
+            key={task.id}
+          >
             <span className="quest-marker" aria-hidden="true">
-              ◇
+              {task.isCompleted ? "✓" : "◇"}
             </span>
 
             <div className="quest-description">
               <h3>{task.title}</h3>
-
               <p className="muted">
                 {task.kind === "daily" ? "Daily quest" : "One-time quest"}
                 {" · "}
                 {difficultyLabels[task.difficulty]}
               </p>
+
+              {task.isCompleted && (
+                <span className="task-completed-label">
+                  {task.kind === "daily" ? "Completed today" : "Completed"}
+                </span>
+              )}
             </div>
 
             <div className="task-actions">
               {confirmDeleteId === task.id ? (
                 <>
                   <span className="task-delete-question">Delete?</span>
-
                   <button
                     className="task-delete-button"
                     type="button"
@@ -306,7 +508,6 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
                   >
                     {deletingId === task.id ? "Deleting…" : "Yes"}
                   </button>
-
                   <button
                     className="task-cancel-button"
                     type="button"
@@ -317,18 +518,32 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
                   </button>
                 </>
               ) : (
-                <button
-                  className="task-delete-button"
-                  type="button"
-                  disabled={isBusy}
-                  onClick={() => {
-                    setActionError("");
-                    setConfirmDeleteId(task.id);
-                  }}
-                  aria-label={`Delete ${task.title}`}
-                >
-                  Delete
-                </button>
+                <>
+                  {!task.isCompleted && (
+                    <button
+                      className="button button-primary task-complete-button"
+                      type="button"
+                      disabled={isBusy}
+                      onClick={() => void handleComplete(task)}
+                      aria-label={`Complete ${task.title}`}
+                    >
+                      {completingId === task.id ? "Completing…" : "Complete"}
+                    </button>
+                  )}
+
+                  <button
+                    className="task-delete-button"
+                    type="button"
+                    disabled={isBusy}
+                    onClick={() => {
+                      setActionError("");
+                      setConfirmDeleteId(task.id);
+                    }}
+                    aria-label={`Delete ${task.title}`}
+                  >
+                    Delete
+                  </button>
+                </>
               )}
             </div>
           </li>
@@ -346,7 +561,6 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
           <p className="task-error" role="alert">
             {loadError}
           </p>
-
           <button
             className="button button-secondary"
             type="button"
@@ -379,8 +593,8 @@ export default function TasksPanel({ onSessionExpired }: TasksPanelProps) {
       )}
 
       <p className="section-footnote">
-        Your quests are saved to your account. Completion and rewards are coming
-        next.
+        Daily quests reset with your account’s local day. Use Refresh to check
+        for updates.
       </p>
     </section>
   );

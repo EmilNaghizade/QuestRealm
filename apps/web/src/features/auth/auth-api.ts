@@ -1,13 +1,24 @@
 import { apiRequest } from "../../lib/api";
 
-export type AuthUser = {
+export type Progression = {
+  level: number;
+  xpIntoLevel: number;
+  xpForNextLevel: number;
+  xpRemaining: number;
+};
+
+export type PlayerBalance = {
+  xp: number;
+  gold: number;
+  progression: Progression;
+};
+
+export type AuthUser = PlayerBalance & {
   id: string;
   displayName: string;
   email: string;
   timeZone: string;
   characterId: string | null;
-  xp: number;
-  gold: number;
 };
 
 type AuthResponse = {

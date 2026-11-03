@@ -21,7 +21,15 @@ export const createTaskSchema = z
 export const listTasksSchema = z
   .object({
     cursor: taskIdSchema.optional(),
+
+    kind: z.enum(["daily", "once"]).optional(),
+
+    difficulty: z.enum(["easy", "medium", "hard"]).optional(),
+
+    status: z.enum(["active", "completed"]).optional(),
   })
   .strict();
 
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;
+
+export type ListTasksInput = z.infer<typeof listTasksSchema>;

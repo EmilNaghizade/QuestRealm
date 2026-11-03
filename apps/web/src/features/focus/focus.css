@@ -1,0 +1,420 @@
+.focus-center-layout {
+  display: grid;
+  gap: 24px;
+}
+
+.focus-center {
+  min-width: 0;
+}
+
+/* Timer */
+
+.focus-mode-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.focus-timer-display {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: 40px 0 28px;
+  text-align: center;
+}
+
+.focus-timer-value {
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: clamp(56px, 12vw, 104px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.focus-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.focus-controls .button {
+  min-width: 120px;
+}
+
+/* Messages */
+
+.focus-message {
+  margin-top: 16px;
+  color: var(--primary);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.focus-message:empty {
+  margin: 0;
+}
+
+.focus-error {
+  padding: 12px;
+  border: 1px solid var(--coral);
+  border-radius: 10px;
+  background: var(--coral-soft);
+  color: var(--coral);
+}
+
+/* Session summary */
+
+.focus-session-summary {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-muted);
+  text-align: center;
+}
+
+.focus-session-summary .muted {
+  font-size: 12px;
+}
+
+/* Duration settings */
+
+.focus-settings-description {
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.focus-settings-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 18px;
+  min-width: 0;
+  margin: 24px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.focus-field {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+}
+
+.focus-field label,
+.focus-control-label {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.focus-field input[type="number"] {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.focus-field input[type="number"]:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.focus-settings-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.focus-settings-actions p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.focus-save-button {
+  flex-shrink: 0;
+  min-width: 160px;
+  min-height: 46px;
+  margin: 0;
+}
+
+.focus-settings-fields:disabled {
+  opacity: 0.65;
+}
+
+/* Sound controls */
+
+.focus-sound-controls {
+  display: grid;
+  grid-template-columns:
+    minmax(140px, auto)
+    minmax(180px, 1fr)
+    minmax(150px, auto);
+  align-items: end;
+  gap: 24px;
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-muted);
+}
+
+.focus-sound-item {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+}
+
+.focus-sound-item .button {
+  min-height: 46px;
+}
+
+.focus-volume-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 22px;
+}
+
+.focus-volume-heading label {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.focus-volume-value {
+  min-width: 44px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.focus-volume-slider {
+  display: flex;
+  align-items: center;
+  min-height: 46px;
+}
+
+.focus-volume-range {
+  --range-fill: 50%;
+
+  display: block;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  min-width: 0;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.focus-volume-range::-webkit-slider-runnable-track {
+  height: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--primary) 0%,
+    var(--primary) var(--range-fill),
+    var(--border) var(--range-fill),
+    var(--border) 100%
+  );
+}
+
+.focus-volume-range::-webkit-slider-thumb {
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -6px;
+  border: 3px solid var(--surface);
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.focus-volume-range::-moz-range-track {
+  height: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--primary) 0%,
+    var(--primary) var(--range-fill),
+    var(--border) var(--range-fill),
+    var(--border) 100%
+  );
+}
+
+.focus-volume-range::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--surface);
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.focus-volume-range:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 5px;
+  border-radius: 999px;
+}
+
+.focus-volume-range:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Confirmation modal */
+
+.focus-confirm-dialog {
+  box-sizing: border-box;
+  width: min(460px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.focus-confirm-dialog::backdrop {
+  background: color-mix(in srgb, var(--background) 65%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.focus-confirm-content {
+  padding: 30px;
+}
+
+.focus-confirm-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 22px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 28px;
+}
+
+.focus-confirm-content h2 {
+  margin-top: 10px;
+  font-family: var(--font-heading);
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.focus-confirm-description {
+  margin-top: 14px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.focus-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.focus-confirm-actions .button {
+  min-height: 46px;
+}
+
+/* Shared disabled state */
+
+.focus-center button:disabled,
+.focus-confirm-dialog button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Mobile */
+
+@media (max-width: 760px) {
+  .focus-sound-controls {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .focus-sound-item .button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .focus-settings-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .focus-settings-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .focus-save-button {
+    width: 100%;
+  }
+
+  .focus-mode-buttons .button {
+    flex: 1 1 100px;
+  }
+
+  .focus-confirm-content {
+    padding: 24px;
+  }
+
+  .focus-confirm-actions {
+    flex-direction: column-reverse;
+  }
+
+  .focus-confirm-actions .button {
+    width: 100%;
+  }
+}

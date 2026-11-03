@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
+import ConnectionStatus from "./components/ConnectionStatus";
+import InstallPrompt from "./components/InstallPrompt";
 import AuthScreen from "./features/auth/AuthScreen";
 import Dashboard from "./features/dashboard/Dashboard";
 import ChooseCharacter from "./features/character/ChooseCharacter";
+import FocusProvider from "./features/focus/FocusProviderView";
+import FocusSoundProvider from "./features/focus/FocusSoundProviderView";
 import {
   getCurrentUser,
   logout,
   type AuthUser,
+  type PlayerBalance,
 } from "./features/auth/auth-api";
 import { ApiError } from "./lib/api";
 
@@ -15,11 +20,10 @@ type SessionState =
   | { status: "anonymous" }
   | { status: "error"; message: string };
 
-export default function App() {
+function AppContent() {
   const [session, setSession] = useState<SessionState>({
     status: "loading",
   });
-
   const [retryCount, setRetryCount] = useState(0);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState("");
@@ -27,6 +31,24 @@ export default function App() {
   const handleSessionExpired = useCallback(() => {
     setLogoutError("");
     setSession({ status: "anonymous" });
+  }, []);
+
+  const handleBalanceChanged = useCallback((balance: PlayerBalance) => {
+    setSession((current) => {
+      if (current.status !== "authenticated") {
+        return current;
+      }
+
+      return {
+        status: "authenticated",
+        user: {
+          ...current.user,
+          xp: balance.xp,
+          gold: balance.gold,
+          progression: balance.progression,
+        },
+      };
+    });
   }, []);
 
   useEffect(() => {
@@ -40,9 +62,7 @@ export default function App() {
           setSession({ status: "authenticated", user });
         }
       } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
+        if (controller.signal.aborted) return;
 
         if (error instanceof ApiError && error.status === 401) {
           setSession({ status: "anonymous" });
@@ -65,9 +85,7 @@ export default function App() {
   }, [retryCount]);
 
   async function handleLogout() {
-    if (isLoggingOut) {
-      return;
-    }
+    if (isLoggingOut) return;
 
     setIsLoggingOut(true);
     setLogoutError("");
@@ -167,20 +185,35 @@ export default function App() {
 
               return {
                 status: "authenticated",
-                user: {
-                  ...current.user,
-                  characterId,
-                },
+                user: { ...current.user, characterId },
               };
             });
           }}
         />
       ) : (
-        <Dashboard
-          user={session.user}
+        <FocusProvider
+          key={session.user.id}
           onSessionExpired={handleSessionExpired}
-        />
+        >
+          <FocusSoundProvider>
+            <Dashboard
+              user={session.user}
+              onSessionExpired={handleSessionExpired}
+              onBalanceChanged={handleBalanceChanged}
+            />
+          </FocusSoundProvider>
+        </FocusProvider>
       )}
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <ConnectionStatus />
+      <AppContent />
+      <InstallPrompt />
     </>
   );
 }

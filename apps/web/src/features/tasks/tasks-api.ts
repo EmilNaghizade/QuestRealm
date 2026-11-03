@@ -1,4 +1,5 @@
 import { apiRequest } from "../../lib/api";
+import type { PlayerBalance } from "../auth/auth-api";
 
 export type Task = {
   id: string;
@@ -7,6 +8,12 @@ export type Task = {
   difficulty: "easy" | "medium" | "hard";
   isCompleted: boolean;
   createdAt: string;
+};
+
+export type TaskFilters = {
+  kind?: Task["kind"];
+  difficulty?: Task["difficulty"];
+  status?: "active" | "completed";
 };
 
 export type CreateTaskInput = Pick<Task, "title" | "kind" | "difficulty">;
@@ -28,19 +35,35 @@ export type TaskCompletion = {
     xp: number;
     gold: number;
   };
-  balance: {
-    xp: number;
-    gold: number;
-  };
+  balance: PlayerBalance;
 };
 
 export function getTasks(
   cursor?: string,
   signal?: AbortSignal,
+  filters: TaskFilters = {},
 ): Promise<TasksResponse> {
-  const query = cursor ? `?cursor=${encodeURIComponent(cursor)}` : "";
+  const params = new URLSearchParams();
 
-  return apiRequest<TasksResponse>(`/tasks${query}`, {
+  if (cursor) {
+    params.set("cursor", cursor);
+  }
+
+  if (filters.kind) {
+    params.set("kind", filters.kind);
+  }
+
+  if (filters.difficulty) {
+    params.set("difficulty", filters.difficulty);
+  }
+
+  if (filters.status) {
+    params.set("status", filters.status);
+  }
+
+  const query = params.toString();
+
+  return apiRequest<TasksResponse>(`/tasks${query ? `?${query}` : ""}`, {
     signal,
   });
 }

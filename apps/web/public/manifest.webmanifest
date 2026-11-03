@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "QuestRealm",
+  "short_name": "QuestRealm",
+  "description": "Turn everyday progress into an adventure.",
+  "lang": "en",
+  "start_url": "/#dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#101626",
+  "theme_color": "#101626",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
