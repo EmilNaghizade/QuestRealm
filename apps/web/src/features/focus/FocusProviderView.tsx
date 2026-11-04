@@ -301,16 +301,17 @@ export default function FocusProvider({
         setRemainingMs(remaining);
       }
 
+      // A completed cycle needs server confirmation even in a background tab.
+      const cycleDue = current?.status === "running" && remaining === 0;
       if (
-        document.visibilityState !== "visible" ||
+        (!cycleDue && document.visibilityState !== "visible") ||
         !navigator.onLine ||
         controllerRef.current
       ) {
         return;
       }
 
-      const refreshInterval =
-        current?.status === "running" && remaining === 0 ? 3_000 : 15_000;
+      const refreshInterval = cycleDue ? 3_000 : 15_000;
 
       if (now - lastAttemptRef.current >= refreshInterval) {
         void refresh();
