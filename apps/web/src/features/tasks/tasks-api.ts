@@ -105,3 +105,8 @@ export async function updateTask(id: string, input: CreateTaskInput): Promise<Ta
   );
   return response.data.task;
 }
+
+export async function deleteAllTasks(): Promise<number> {
+  const response = await apiRequest<{ data: { deletedCount: number } }>("/tasks", { method: "DELETE" });
+  return response.data.deletedCount;
+}

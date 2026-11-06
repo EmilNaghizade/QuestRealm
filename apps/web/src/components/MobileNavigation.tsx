@@ -1,3 +1,5 @@
+import { getPageFromHash } from "../lib/navigation";
+import BrandLogo from "./BrandLogo";
 import { useEffect, useRef, useState } from "react";
 import "./mobile-navigation.css";
 
@@ -18,16 +20,13 @@ export default function MobileNavigation() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [installed, setInstalled] = useState(isStandalone);
-  const [page, setPage] = useState(() =>
-    window.location.hash === "#focus" ? "focus" : "dashboard",
-  );
-
+  const [page, setPage] = useState(() => getPageFromHash(window.location.hash));
   useEffect(() => {
     const mobileViewport = window.matchMedia("(max-width: 850px)");
     const standaloneMode = window.matchMedia("(display-mode: standalone)");
 
     function handleHashChange() {
-      setPage(window.location.hash === "#focus" ? "focus" : "dashboard");
+      setPage(getPageFromHash(window.location.hash));
     }
 
     function handleViewportChange() {
@@ -100,15 +99,7 @@ export default function MobileNavigation() {
     <>
       <header className="mobile-navigation-bar">
         <a className="brand" href="#dashboard">
-          <span className="brand-mark" aria-hidden="true">
-            Q
-          </span>
-          <span>
-            <strong>QuestRealm</strong>
-            <small>
-              {page === "focus" ? "Your focus space" : "Your daily adventure"}
-            </small>
-          </span>
+          <BrandLogo/>
         </a>
 
         <button
@@ -202,17 +193,9 @@ export default function MobileNavigation() {
             </span>
           </a>
 
-          <span
-            className="mobile-menu-link mobile-menu-link-unavailable"
-            aria-disabled="true"
-          >
-            <span aria-hidden="true">♜</span>
-            <span>
-              <strong>Character</strong>
-              <small>Your next chapter</small>
-            </span>
-            <span className="badge badge-muted">Soon</span>
-          </span>
+          <a className={`mobile-menu-link ${page === "character" ? "mobile-menu-link-active" : ""}`} href="#character" aria-current={page === "character" ? "page" : undefined} onClick={closeMenu}>
+            <span aria-hidden="true">♙</span><span><strong>Character</strong><small>Your story, equipment and market</small></span><span aria-hidden="true">→</span>
+          </a>
 
           <span
             className="mobile-menu-link mobile-menu-link-unavailable"

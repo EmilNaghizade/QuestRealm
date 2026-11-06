@@ -12,6 +12,8 @@ import { characterRouter } from "./modules/character/character.routes.js";
 import { taskRouter } from "./modules/tasks/task.routes.js";
 import { focusRouter } from "./modules/focus/focus.routes.js";
 
+import { marketRouter } from "./modules/market/market.routes.js";
+
 export const app = express();
 
 app.disable("x-powered-by");
@@ -67,6 +69,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/characters", characterRouter);
 app.use("/api/v1/tasks", taskRouter);
 app.use("/api/v1/focus", focusRouter);
+app.use("/api/v1/market", marketRouter);
 
 if (env.NODE_ENV === "production") {
   const webDirectory = fileURLToPath(

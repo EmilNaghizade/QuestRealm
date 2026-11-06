@@ -15,7 +15,7 @@ export default function KnightPreview() {
       </div>
       <p className="muted">
         Try a look for your next adventure. This preview resets when you leave
-        the dashboard. Equipment purchases are coming later.
+        this page. Equipment purchases are coming later.
       </p>
       <div
         className="knight-preview-stage"

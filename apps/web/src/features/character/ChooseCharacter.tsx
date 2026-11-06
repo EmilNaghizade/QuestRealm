@@ -1,3 +1,4 @@
+import BrandLogo from "../../components/BrandLogo";
 import { useEffect, useState, type FormEvent } from "react";
 import { ApiError } from "../../lib/api";
 import {
@@ -125,7 +126,7 @@ export default function ChooseCharacter({
   return (
     <main className="character-page">
       <header className="character-page-header">
-        <a className="character-brand" href="#dashboard">QuestRealm</a>
+        <a className="character-brand" href="#dashboard"><BrandLogo/></a>
         <h1>Choose your character.</h1>
         <p className="muted">
           A companion for your everyday progress.

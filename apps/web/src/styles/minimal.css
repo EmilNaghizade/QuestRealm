@@ -262,3 +262,50 @@ h2 { font-size: 27px; letter-spacing: -.5px; }
   .minimal-dashboard .task-actions .task-delete-button,
   .minimal-dashboard .task-actions .task-cancel-button { min-height: 44px; padding-inline: 16px; font-size: 13px; }
 }
+
+.quest-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.task-delete-all { color: var(--coral); background: transparent; border-color: var(--border); }
+.task-delete-all-confirm { background: var(--coral); color: var(--surface-raised); }
+.delete-all-confirmation { margin-top: 18px; padding: 18px; border: 1px solid var(--coral); border-radius: 8px; background: var(--coral-soft); }
+.delete-all-confirmation p { margin: 10px 0 16px; font-size: 14px; }
+.character-home { border-top: 1px solid var(--border); padding-top: 30px; display: grid; gap: 28px; }
+.character-profile { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+.character-profile h2 { font-size: 28px; }
+.character-profile .muted { margin-top: 8px; }
+.character-totals { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin: 24px 0 0; }
+.character-totals dt { color: var(--text-muted); font-size: 12px; }
+.character-totals dd { margin: 4px 0 0; font-size: 24px; font-weight: 600; }
+.character-equipment { border-top: 1px solid var(--border); padding-top: 24px; }
+.character-home .knight-preview { padding: 0; border: 0; background: transparent; }
+.character-home .knight-preview-stage { width: min(100%,300px); background: var(--primary-soft); }
+.character-home .knight-preview > .muted { font-size: 14px; margin-top: 10px; }
+.character-home progress { height: 7px; margin-top: 16px; }
+@media (max-width: 600px) { .quests-card > .section-heading { flex-wrap: wrap; } .character-profile { grid-template-columns: 1fr; gap: 24px; } .character-totals { gap: 12px; } }
+
+.character-story, .equipment-summary, .market-panel { border-top: 1px solid var(--border); padding-top: 26px; }
+.character-story > .muted, .market-description { margin-top: 12px; max-width: 740px; font-size: 15px; }
+.equipment-slots { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; margin: 24px 0 0; }
+.equipment-slots > div { border-left: 2px solid var(--primary-soft); padding-left: 16px; }
+.equipment-slots dt, .market-slot { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.equipment-slots dd { margin: 8px 0; font-size: 17px; font-weight: 500; }
+.equipment-slots .auth-text-button { font-size: 12px; }
+.market-balance { color: var(--accent); white-space: nowrap; }
+.market-list { list-style: none; margin: 24px 0 0; padding: 0; }
+.market-item { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--border); align-items: center; }
+.market-item h3 { margin-top: 6px; font-size: 20px; }
+.market-item .muted { margin-top: 8px; font-size: 14px; }
+.market-item-equipped .market-slot { color: var(--primary); }
+.market-item-action { display: grid; justify-items: end; gap: 10px; font-size: 13px; color: var(--text-muted); }
+.market-item-action .button { min-width: 112px; }
+@media (max-width: 600px) { .equipment-slots { grid-template-columns: 1fr; gap: 20px; } .market-item { grid-template-columns: 1fr; gap: 16px; } .market-item-action { display: flex; justify-content: space-between; align-items: center; } }
+
+/* One vector identity at navigation, onboarding and app-icon sizes. */
+.quest-logo { display: inline-flex; align-items: center; gap: 10px; vertical-align: middle; white-space: nowrap; line-height: 1; }
+.quest-logo-symbol { display: block; flex-shrink: 0; width: 36px; height: 36px; }
+.quest-logo-wordmark { font-family: Georgia, "Times New Roman", serif; font-size: 29px; font-weight: 400; letter-spacing: -1.2px; color: var(--text); }
+.sidebar .brand { padding-inline: 7px; }
+.sidebar .quest-logo-symbol { width: 32px; height: 32px; }
+.sidebar .quest-logo-wordmark { font-size: 26px; }
+.character-brand { letter-spacing: normal; }
+@media (min-width: 851px) and (max-width: 1200px) { .sidebar .brand { padding-inline: 0; } .sidebar .quest-logo-wordmark { font-size: 23px; } .sidebar .quest-logo { gap: 8px; } }
+@media (max-width: 600px) { .quest-logo-symbol { width: 32px; height: 32px; } .quest-logo-wordmark { font-size: 26px; } .mobile-navigation-bar .quest-logo-wordmark { font-size: 25px; } }

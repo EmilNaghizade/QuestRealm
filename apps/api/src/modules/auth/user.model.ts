@@ -8,6 +8,10 @@ export interface UserRecord {
   characterId: string | null;
   xp: number;
   gold: number;
+  ownedItems: string[];
+  equippedWeapon: string | null;
+  equippedArmor: string | null;
+  equippedCharm: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,6 +57,11 @@ const userSchema = new Schema<UserRecord>(
       default: 0,
       min: 0,
     },
+
+    ownedItems: { type: [String], default: [] },
+    equippedWeapon: { type: String, default: null },
+    equippedArmor: { type: String, default: null },
+    equippedCharm: { type: String, default: null },
 
     gold: {
       type: Number,

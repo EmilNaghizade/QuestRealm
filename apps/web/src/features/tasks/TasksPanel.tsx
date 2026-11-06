@@ -6,6 +6,7 @@ import {
   createTask,
   updateTask,
   deleteTask,
+  deleteAllTasks,
   getTasks,
   type Task,
   type TaskFilters,
@@ -53,13 +54,15 @@ export default function TasksPanel({
   const [kind, setKind] = useState<Task["kind"]>("daily");
   const [difficulty, setDifficulty] = useState<Task["difficulty"]>("easy");
 
+  const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [completingId, setCompletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const isBusy =
-    isLoading || isCreating || deletingId !== null || completingId !== null;
+    isLoading || isCreating || isDeletingAll || deletingId !== null || completingId !== null;
 
   const hasFilters = Boolean(
     filters.kind || filters.difficulty || filters.status,
@@ -266,6 +269,21 @@ export default function TasksPanel({
     }
   }
 
+  async function handleDeleteAll() {
+    if (isBusy) return;
+    setIsDeletingAll(true); setActionError(""); setNotice("");
+    try {
+      const count = await deleteAllTasks();
+      setConfirmDeleteAll(false); setConfirmDeleteId(null);
+      setEditingTask(null); setIsCreateOpen(false); setTitle("");
+      setNotice(`${count} quests deleted. Your XP and gold are unchanged.`);
+      refreshFromStart();
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) { onSessionExpired(); return; }
+      setActionError(error instanceof ApiError ? error.message : "Unable to delete quests. Please try again.");
+    } finally { setIsDeletingAll(false); }
+  }
+
   async function handleDelete(id: string) {
     if (isBusy) return;
 
@@ -310,12 +328,21 @@ export default function TasksPanel({
     >
       <div className="section-heading">
         <h2 id="quests-title">Your quests</h2>
+        <div className="quest-toolbar">
+        <button className="button task-delete-all" type="button" disabled={isBusy} aria-expanded={confirmDeleteAll} aria-controls="delete-all-confirmation" onClick={() => { setConfirmDeleteAll(current => !current); setConfirmDeleteId(null); }}>Delete all</button>
         <button className="button button-secondary" type="button" aria-expanded={isCreateOpen} aria-controls="new-quest-form"
           disabled={isBusy} onClick={() => {
             setEditingTask(null); setTitle(""); setKind("daily"); setDifficulty("easy");
             setActionError(""); setIsCreateOpen(true);
           }}>＋ New quest</button>
+        </div>
       </div>
+      {confirmDeleteAll && <section className="delete-all-confirmation" id="delete-all-confirmation" aria-labelledby="delete-all-title">
+        <h3 id="delete-all-title">Delete all quests?</h3>
+        <p>This removes every quest, including completed quests and quests outside the current filter. Your XP and gold stay unchanged.</p>
+        <div className="quest-toolbar"><button className="button button-secondary" type="button" disabled={isBusy} onClick={() => setConfirmDeleteAll(false)}>Cancel</button>
+        <button className="button task-delete-all-confirm" type="button" disabled={isBusy} onClick={() => void handleDeleteAll()}>{isDeletingAll ? "Deleting…" : "Delete all quests"}</button></div>
+      </section>}
       <div className="task-tabs" role="group" aria-label="Quest type">
         {([{ value: undefined, label: "All" }, { value: "daily", label: "Daily" }, { value: "once", label: "One-time" }] as const).map(tab => (
           <button key={tab.label} type="button" aria-pressed={filters.kind === tab.value} disabled={isBusy}

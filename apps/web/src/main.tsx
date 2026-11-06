@@ -32,3 +32,5 @@ registerServiceWorker();
 import "./styles/minimal.css";
 
 import "./styles/motion.css";
+
+import "./styles/rpg.css";

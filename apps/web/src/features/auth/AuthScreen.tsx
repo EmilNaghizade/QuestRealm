@@ -1,3 +1,4 @@
+import BrandLogo from "../../components/BrandLogo";
 import { useState, type FormEvent } from "react";
 import { ApiError } from "../../lib/api";
 import { login, register, type AuthUser } from "./auth-api";
@@ -65,14 +66,7 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
     <main className="auth-page">
       <div className="auth-layout">
         <section className="auth-story" aria-labelledby="auth-story-title">
-          <div className="brand">
-
-
-            <span>
-              <strong>QuestRealm</strong>
-
-            </span>
-          </div>
+          <div className="brand"><BrandLogo/></div>
 
           <div className="auth-story-copy">
             <span className="eyebrow">Your adventure awaits</span>

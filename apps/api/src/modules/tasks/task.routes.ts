@@ -8,7 +8,7 @@ import {
   listTasksSchema,
   taskIdSchema,
 } from "./task.validation.js";
-import { createTask, deleteTask, listTasks, updateTask } from "./task.service.js";
+import { createTask, deleteTask, deleteAllTasks, listTasks, updateTask } from "./task.service.js";
 import { completeTask } from "./task-completion.service.js";
 
 export const taskRouter = Router();
@@ -157,5 +157,13 @@ taskRouter.patch("/:taskId", async (request, response, next) => {
     if (!result.success) throw new AppError(400, "VALIDATION_ERROR", result.error.issues[0]?.message ?? "Check your quest details.");
     const task = await updateTask(user._id, id.data, result.data);
     response.json({ data: { task } });
+  } catch (error) { next(error); }
+});
+
+taskRouter.delete("/", async (request, response, next) => {
+  try {
+    const user = await requireTaskUser(request);
+    const deletedCount = await deleteAllTasks(user._id);
+    response.json({ data: { deletedCount } });
   } catch (error) { next(error); }
 });

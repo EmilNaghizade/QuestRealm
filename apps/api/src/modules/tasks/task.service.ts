@@ -225,3 +225,12 @@ export async function updateTask(userId: Types.ObjectId, taskId: string, input: 
   if (!task) throw new AppError(409, "TASK_CHANGED", "This quest changed. Refresh your quests before editing.");
   return serializeTask(task, false);
 }
+
+export async function deleteAllTasks(userId: Types.ObjectId): Promise<number> {
+  const result = await Task.updateMany(
+    { userId, deletedAt: null },
+    { $set: { deletedAt: new Date() } },
+    { runValidators: true },
+  );
+  return result.modifiedCount;
+}

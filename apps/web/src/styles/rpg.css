@@ -1,0 +1,120 @@
+/* A restrained RPG journal: parchment, forest-green enamel and brass edges. */
+:root {
+  --background: #f2ebd9;
+  --surface: #f2ebd9;
+  --surface-raised: #faf5e8;
+  --surface-muted: #e0d6bd;
+  --text: #302c22;
+  --text-muted: #71664f;
+  --border: #c9b993;
+  --primary: #3e5e42;
+  --on-primary: #fff9e9;
+  --primary-soft: #dfe4cd;
+  --accent: #856323;
+  --accent-soft: #eee0b5;
+  --coral: #963f32;
+  --coral-soft: #f0ddd0;
+  --font-body: Georgia, "Times New Roman", serif;
+  --font-heading: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-game-ui: "Courier New", Courier, monospace;
+  --radius: 3px;
+}
+:root[data-theme="dark"] {
+  --background: #23251f;
+  --surface: #23251f;
+  --surface-raised: #2e3127;
+  --surface-muted: #3c4031;
+  --text: #f0e7cf;
+  --text-muted: #b8ad92;
+  --border: #5c5b43;
+  --primary: #b1c398;
+  --on-primary: #232d20;
+  --primary-soft: #353e2b;
+  --accent: #d5b76d;
+  --accent-soft: #443d27;
+  --coral: #e3a08a;
+  --coral-soft: #483128;
+}
+body {
+  font-family: var(--font-body);
+  line-height: 1.65;
+  background-color: var(--background);
+  background-image: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--accent) 2%, transparent) 3px 4px);
+}
+h1, h2, h3 { font-family: var(--font-heading); }
+h1 { font-weight: 700; letter-spacing: -.8px; }
+h2 { font-weight: 700; letter-spacing: .2px; }
+.page-header { padding-bottom: 8px; }
+.page-header h1::after { content: ""; display: block; width: 42px; height: 3px; margin: 12px 0 10px; background: var(--accent); box-shadow: 9px 0 0 color-mix(in srgb, var(--accent) 30%, transparent); }
+.page-header .muted { font-size: 18px; font-style: italic; }
+.quest-logo-wordmark { font-family: var(--font-heading); font-weight: 700; }
+.quest-logo-symbol { filter: drop-shadow(0 2px 0 color-mix(in srgb, var(--accent) 25%, transparent)); }
+.sidebar { border-right: 3px double var(--border); background: color-mix(in srgb, var(--surface-raised) 48%, transparent); }
+.navigation-item { border: 1px solid transparent; border-radius: 2px; font-family: var(--font-heading); font-size: 20px; }
+.navigation-item-active { border-color: var(--border); box-shadow: inset 3px 0 var(--accent), inset 0 0 0 2px var(--surface); }
+.navigation-item:hover { border-color: var(--border); }
+.navigation-item small, .eyebrow, .badge, .task-tabs button, .market-slot, .equipment-slots dt { font-family: var(--font-game-ui); }
+.button, .task-actions button, .auth-text-button, .mobile-menu-toggle, .mobile-menu-close { font-family: var(--font-heading); }
+.button { border-radius: 3px; font-weight: 700; letter-spacing: .2px; }
+.button-primary { border: 1px solid color-mix(in srgb, var(--primary) 70%, var(--text)); box-shadow: inset 0 1px 0 rgb(255 255 255 / 18%), 0 2px 0 color-mix(in srgb, var(--primary) 65%, var(--text)); }
+.button-secondary { background: var(--surface-raised); box-shadow: inset 0 0 0 2px var(--surface); }
+.button:active:not(:disabled) { box-shadow: inset 0 1px 3px rgb(0 0 0 / 12%); }
+.player-strip { border-bottom: 3px double var(--border); }
+.player-strip .badge { font-size: 16px; letter-spacing: -.4px; }
+.player-xp span, .player-gold, .quest-reward-text, .quest-completion p, .focus-today, .market-balance, .market-item-action > span { font-family: var(--font-game-ui); font-size: 13px; }
+.player-xp progress, .quest-completion progress { border-radius: 1px; height: 8px; border: 1px solid var(--border); }
+progress::-webkit-progress-bar, progress::-webkit-progress-value, progress::-moz-progress-bar { border-radius: 0; }
+.gold-dot { border-radius: 2px; background: var(--accent); rotate: 45deg; width: 10px; height: 10px; }
+.task-tabs { border-bottom: 3px double var(--border); gap: 18px; }
+.task-tabs button { font-size: 14px; }
+.quest-description h3 { font-size: 20px; font-weight: 700; }
+.quest-description p { font-size: 14px; }
+.minimal-dashboard .task-actions .task-edit-button, .minimal-dashboard .task-actions .task-delete-button, .minimal-dashboard .task-actions .task-cancel-button { border-radius: 2px; font-family: var(--font-heading); font-size: 13px; }
+.minimal-dashboard .quest-check { border-radius: 4px; width: 28px; height: 28px; border-color: var(--border); box-shadow: inset 0 0 0 2px var(--surface); }
+.minimal-dashboard .quest-check:disabled { box-shadow: none; }
+.minimal-dashboard .task-create-panel, .delete-all-confirmation { border: 3px double var(--border); border-radius: 3px; background: var(--surface-raised); }
+.delete-all-confirmation { border-color: var(--coral); }
+.task-field input, .task-field select, .auth-field input, .focus-field input { border-radius: 2px; font-family: var(--font-body); box-shadow: inset 0 1px 2px rgb(0 0 0 / 4%); }
+.dashboard-side { border-left: 3px double var(--border); }
+.minimal-dashboard .focus-card { padding: 20px; border: 3px double var(--border); background: var(--surface-raised); box-shadow: inset 0 0 0 4px var(--surface); }
+.minimal-dashboard .timer-preview, #focus .focus-timer-value { font-family: var(--font-game-ui); font-weight: 400; letter-spacing: -4px; font-size: clamp(44px, 5vw, 60px); }
+#focus .focus-timer-value { font-size: clamp(64px, 10vw, 104px); }
+.focus-caption { font-size: 15px; font-style: italic; }
+.focus-details-link { font-size: 13px; }
+.conquest-preview { border-top: 3px double var(--border); }
+.auth-form-card { border-left: 3px double var(--border); }
+.auth-story-copy h1 { font-family: var(--font-heading); }
+.auth-story-copy > .muted, .auth-story-footer { font-style: italic; }
+.character-option { border-top: 3px double var(--border); }
+.character-option-name { font-family: var(--font-heading); }
+.character-profile h2 { font-size: 32px; }
+.character-totals dd { font-family: var(--font-game-ui); font-size: 22px; }
+.character-story, .equipment-summary, .market-panel { border-top: 3px double var(--border); }
+.equipment-slots > div { border-left-color: var(--accent); }
+.market-item h3 { font-size: 23px; }
+.market-item-equipped { background: color-mix(in srgb, var(--primary-soft) 45%, transparent); padding-inline: 14px; border-left: 2px solid var(--accent); }
+.market-slot { font-size: 11px; }
+#focus .focus-center-layout > .card, #focus .focus-stats-layout > .card { border-top: 3px double var(--border); }
+#focus .focus-mode-buttons .button { font-family: var(--font-game-ui); font-size: 13px; }
+.progress-celebration { border-radius: 3px; border: 3px double var(--border); box-shadow: inset 0 0 0 4px var(--surface), 0 12px 32px rgb(0 0 0 / 16%); }
+.level-celebration { border-color: var(--accent); }
+.celebration-label { font-family: var(--font-game-ui); font-size: 10px; }
+.level-celebration h2 { font-family: var(--font-heading); }
+.mobile-navigation-bar { border-bottom: 3px double var(--border); }
+.mobile-menu-dialog { border-radius: 0; border-right: 3px double var(--border); }
+.mobile-menu-link { border-radius: 2px; }
+.mobile-menu-toggle, .mobile-menu-close { border-radius: 3px; }
+@media (max-width: 1000px) {
+  .dashboard-side { border-left: 0; border-top: 3px double var(--border); }
+  .conquest-preview { border-left: 3px double var(--border); border-top: 0; }
+}
+@media (max-width: 850px) { .auth-form-card { border-left: 0; border-top: 3px double var(--border); } }
+@media (max-width: 600px) {
+  .page-header .muted { font-size: 16px; }
+  .player-strip .badge { font-size: 15px; }
+  .player-gold, .player-xp span { font-size: 12px; }
+  .quest-description h3 { font-size: 19px; }
+  .task-tabs button { font-size: 13px; }
+  .conquest-preview { border-left: 0; border-top: 3px double var(--border); }
+  .minimal-dashboard .timer-preview { font-size: 60px; }
+}
