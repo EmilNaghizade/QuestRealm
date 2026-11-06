@@ -1,0 +1,14 @@
+{
+  "extends": "./api/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./.vercel-ts-build",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./apps/api/node_modules/@types"
+    ]
+  },
+  "include": [
+    "api/handler.ts"
+  ]
+}
