@@ -125,10 +125,10 @@ export default function ChooseCharacter({
   return (
     <main className="character-page">
       <header className="character-page-header">
-        <span className="eyebrow">Your story begins here</span>
-        <h1>Choose your adventurer.</h1>
+        <a className="character-brand" href="#dashboard">QuestRealm</a>
+        <h1>Choose your character.</h1>
         <p className="muted">
-          Six paths. One new beginning. Who will you become?
+          A companion for your everyday progress.
         </p>
       </header>
 
@@ -152,9 +152,7 @@ export default function ChooseCharacter({
                 required
               />
 
-              <span className="character-art" aria-hidden="true">
-                {character.symbol}
-              </span>
+
 
               <span className="character-option-name">{character.name}</span>
 

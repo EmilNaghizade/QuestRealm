@@ -1,0 +1,42 @@
+.knight-preview {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.knight-preview-stage {
+  position: relative;
+  width: min(100%, 400px);
+  aspect-ratio: 1;
+  margin: 16px auto;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.knight-preview-stage img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Align the generated gripping hand with the base character's fist. */
+.knight-preview-stage .knight-preview-sword {
+  transform: translate(-0.6%, -4.5%);
+}
+
+.knight-preview-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.knight-preview-controls [aria-pressed="true"] {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

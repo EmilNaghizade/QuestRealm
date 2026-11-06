@@ -7,6 +7,7 @@ export type Task = {
   kind: "daily" | "once";
   difficulty: "easy" | "medium" | "hard";
   isCompleted: boolean;
+  canChangeKind: boolean;
   createdAt: string;
 };
 
@@ -95,4 +96,12 @@ export async function deleteTask(id: string): Promise<void> {
   await apiRequest<void>(`/tasks/${encodeURIComponent(id)}`, {
     method: "DELETE",
   });
+}
+
+export async function updateTask(id: string, input: CreateTaskInput): Promise<Task> {
+  const response = await apiRequest<{ data: { task: Task } }>(
+    `/tasks/${encodeURIComponent(id)}`,
+    { method: "PATCH", json: input },
+  );
+  return response.data.task;
 }

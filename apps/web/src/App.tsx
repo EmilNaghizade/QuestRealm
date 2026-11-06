@@ -157,7 +157,7 @@ function AppContent() {
     <>
       <div className="account-bar">
         <span>
-          Signed in as <strong>{session.user.displayName}</strong>
+          <strong>{session.user.displayName}</strong>
         </span>
 
         {logoutError && (

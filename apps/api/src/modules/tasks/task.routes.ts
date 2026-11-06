@@ -8,7 +8,7 @@ import {
   listTasksSchema,
   taskIdSchema,
 } from "./task.validation.js";
-import { createTask, deleteTask, listTasks } from "./task.service.js";
+import { createTask, deleteTask, listTasks, updateTask } from "./task.service.js";
 import { completeTask } from "./task-completion.service.js";
 
 export const taskRouter = Router();
@@ -145,4 +145,17 @@ taskRouter.delete("/:taskId", async (request, response, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+taskRouter.patch("/:taskId", async (request, response, next) => {
+  try {
+    const user = await requireTaskUser(request);
+    const id = taskIdSchema.safeParse(request.params.taskId);
+    if (!id.success) throw new AppError(400, "VALIDATION_ERROR", "Invalid task ID.");
+    if (!request.is("application/json")) throw new AppError(415, "JSON_REQUIRED", "Use application/json for this request.");
+    const result = createTaskSchema.safeParse(request.body);
+    if (!result.success) throw new AppError(400, "VALIDATION_ERROR", result.error.issues[0]?.message ?? "Check your quest details.");
+    const task = await updateTask(user._id, id.data, result.data);
+    response.json({ data: { task } });
+  } catch (error) { next(error); }
 });

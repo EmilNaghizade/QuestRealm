@@ -66,13 +66,11 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
       <div className="auth-layout">
         <section className="auth-story" aria-labelledby="auth-story-title">
           <div className="brand">
-            <span className="brand-mark" aria-hidden="true">
-              Q
-            </span>
+
 
             <span>
               <strong>QuestRealm</strong>
-              <small>Small steps. Great adventures.</small>
+
             </span>
           </div>
 
@@ -80,9 +78,9 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
             <span className="eyebrow">Your adventure awaits</span>
 
             <h1 id="auth-story-title">
-              Build better days.
+              A little progress,
               <br />
-              Grow your realm.
+              every day.
             </h1>
 
             <p className="muted">

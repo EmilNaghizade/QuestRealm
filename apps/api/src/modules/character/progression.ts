@@ -10,11 +10,11 @@ export function getProgression(totalXp: number): Progression {
     throw new RangeError("Total XP must be a non-negative safe integer.");
   }
 
-  const threshold = (level: number) => 25 * (level - 1) * (level + 2);
+  const threshold = (level: number) => 125 * level * (level + 3);
 
   let level = Math.max(
-    1,
-    Math.floor((Math.sqrt(9 + (4 * totalXp) / 25) - 1) / 2),
+    0,
+    Math.floor((Math.sqrt(9 + (4 * totalXp) / 125) - 3) / 2),
   );
 
   // Correct rounding near exact level boundaries.
@@ -22,7 +22,7 @@ export function getProgression(totalXp: number): Progression {
   while (threshold(level) > totalXp) level -= 1;
 
   const xpIntoLevel = totalXp - threshold(level);
-  const xpForNextLevel = 100 + 50 * (level - 1);
+  const xpForNextLevel = 500 + 250 * level;
 
   return {
     level,

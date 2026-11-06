@@ -28,3 +28,7 @@ createRoot(document.getElementById("root")!).render(
 );
 
 registerServiceWorker();
+
+import "./styles/minimal.css";
+
+import "./styles/motion.css";

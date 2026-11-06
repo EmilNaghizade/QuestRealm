@@ -4,16 +4,19 @@ import { getCurrentUser, type PlayerBalance } from "../auth/auth-api";
 import {
   completeTask,
   createTask,
+  updateTask,
   deleteTask,
   getTasks,
   type Task,
   type TaskFilters,
+  type TaskCompletion,
 } from "./tasks-api";
 import "./tasks.css";
 
 type TasksPanelProps = {
   onSessionExpired: () => void;
   onBalanceChanged: (balance: PlayerBalance) => void;
+  onTaskCompleted: (title: string, result: TaskCompletion) => void;
 };
 
 const difficultyLabels = {
@@ -25,7 +28,14 @@ const difficultyLabels = {
 export default function TasksPanel({
   onSessionExpired,
   onBalanceChanged,
+  onTaskCompleted,
 }: TasksPanelProps) {
+  const [celebratedIds, setCelebratedIds] = useState<string[]>([]);
+  useEffect(() => {
+    if (celebratedIds.length === 0) return;
+    const timeout = window.setTimeout(() => setCelebratedIds([]), 1100);
+    return () => window.clearTimeout(timeout);
+  }, [celebratedIds]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filters, setFilters] = useState<TaskFilters>({});
   const [cursor, setCursor] = useState<string | undefined>();
@@ -37,6 +47,8 @@ export default function TasksPanel({
   const [actionError, setActionError] = useState("");
   const [notice, setNotice] = useState("");
 
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [kind, setKind] = useState<Task["kind"]>("daily");
   const [difficulty, setDifficulty] = useState<Task["difficulty"]>("easy");
@@ -127,7 +139,7 @@ export default function TasksPanel({
       }
 
       return current.map((task) =>
-        task.id === id ? { ...task, isCompleted: true } : task,
+        task.id === id ? { ...task, isCompleted: true, canChangeKind: false } : task,
       );
     });
   }
@@ -149,15 +161,22 @@ export default function TasksPanel({
     setNotice("");
 
     try {
-      await createTask({
-        title: cleanTitle,
-        kind,
-        difficulty,
-      });
+      if (editingTask && tasks.find(task => task.id === editingTask.id)?.isCompleted) {
+        setActionError("Completed quests cannot be edited.");
+        return;
+      }
+      const input = { title: cleanTitle, kind, difficulty };
+      if (editingTask) {
+        await updateTask(editingTask.id, input);
+      } else {
+        await createTask(input);
+      }
 
       setTitle("");
+      setIsCreateOpen(false);
+      setEditingTask(null);
       setNotice(
-        hasFilters
+        editingTask ? "Quest updated." : hasFilters
           ? "Quest created. Your current filters still apply."
           : "Your new quest is ready.",
       );
@@ -172,7 +191,7 @@ export default function TasksPanel({
       setActionError(
         error instanceof ApiError
           ? error.message
-          : "Unable to create your quest. Please try again.",
+          : editingTask ? "Unable to update your quest. Please try again." : "Unable to create your quest. Please try again.",
       );
     } finally {
       setIsCreating(false);
@@ -191,12 +210,11 @@ export default function TasksPanel({
       const result = await completeTask(task.id);
 
       markCompleted(task.id);
+      if (editingTask?.id === task.id) { setEditingTask(null); setIsCreateOpen(false); setTitle(""); }
+      setCelebratedIds(current => [...current, task.id]);
+      onTaskCompleted(task.title, result);
       onBalanceChanged(result.balance);
 
-      setNotice(
-        `Quest completed! +${result.reward.xp} XP and ` +
-          `+${result.reward.gold} gold.`,
-      );
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
         onSessionExpired();
@@ -291,27 +309,22 @@ export default function TasksPanel({
       aria-labelledby="quests-title"
     >
       <div className="section-heading">
-        <div>
-          <p className="eyebrow">One step at a time</p>
-          <h2 id="quests-title">Your quests</h2>
-        </div>
-
-        <button
-          className="button button-secondary"
-          type="button"
-          disabled={isBusy}
-          onClick={() => {
-            setConfirmDeleteId(null);
-            refreshFromStart();
-          }}
-        >
-          Refresh
-        </button>
+        <h2 id="quests-title">Your quests</h2>
+        <button className="button button-secondary" type="button" aria-expanded={isCreateOpen} aria-controls="new-quest-form"
+          disabled={isBusy} onClick={() => {
+            setEditingTask(null); setTitle(""); setKind("daily"); setDifficulty("easy");
+            setActionError(""); setIsCreateOpen(true);
+          }}>＋ New quest</button>
       </div>
-
-      <details className="task-create-panel">
-        <summary>Create a quest</summary>
-
+      <div className="task-tabs" role="group" aria-label="Quest type">
+        {([{ value: undefined, label: "All" }, { value: "daily", label: "Daily" }, { value: "once", label: "One-time" }] as const).map(tab => (
+          <button key={tab.label} type="button" aria-pressed={filters.kind === tab.value} disabled={isBusy}
+            onClick={() => changeFilters({ kind: tab.value })}>{tab.label}</button>
+        ))}
+      </div>
+      <div className="task-create-panel" id="new-quest-form" hidden={!isCreateOpen}>
+        <div className="task-editor-heading"><h3>{editingTask ? "Edit quest" : "New quest"}</h3>
+          <button className="auth-text-button" type="button" disabled={isBusy} onClick={() => { setIsCreateOpen(false); setEditingTask(null); setTitle(""); setActionError(""); }}>Cancel</button></div>
         <form onSubmit={handleCreate}>
           <fieldset className="task-form-fields" disabled={isBusy}>
             <legend className="auth-sr-only">New quest details</legend>
@@ -334,6 +347,7 @@ export default function TasksPanel({
               <select
                 id="task-kind"
                 value={kind}
+                disabled={Boolean(editingTask && !editingTask.canChangeKind)}
                 onChange={(event) =>
                   setKind(event.target.value as Task["kind"])
                 }
@@ -358,87 +372,16 @@ export default function TasksPanel({
               </select>
             </div>
 
+            {editingTask && !editingTask.canChangeKind && <p className="muted task-kind-note">Repeat type is fixed after the first completion. Past rewards stay unchanged.</p>}
             <button
               className="button button-primary task-create-button"
               type="submit"
             >
-              {isCreating ? "Creating…" : "Add quest"}
+              {isCreating ? "Saving…" : editingTask ? "Save changes" : "Add quest"}
             </button>
           </fieldset>
         </form>
-      </details>
-
-      <fieldset className="task-form-fields" disabled={isBusy}>
-        <legend className="auth-sr-only">Filter your quests</legend>
-
-        <div className="task-field">
-          <label htmlFor="quest-filter-kind">Quest type</label>
-          <select
-            id="quest-filter-kind"
-            value={filters.kind ?? ""}
-            onChange={(event) =>
-              changeFilters({
-                ...filters,
-                kind: (event.target.value as Task["kind"]) || undefined,
-              })
-            }
-          >
-            <option value="">All types</option>
-            <option value="daily">Daily</option>
-            <option value="once">One-time</option>
-          </select>
-        </div>
-
-        <div className="task-field">
-          <label htmlFor="quest-filter-difficulty">Difficulty</label>
-          <select
-            id="quest-filter-difficulty"
-            value={filters.difficulty ?? ""}
-            onChange={(event) =>
-              changeFilters({
-                ...filters,
-                difficulty:
-                  (event.target.value as Task["difficulty"]) || undefined,
-              })
-            }
-          >
-            <option value="">All difficulties</option>
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-        </div>
-
-        <div className="task-field">
-          <label htmlFor="quest-filter-status">Status</label>
-          <select
-            id="quest-filter-status"
-            value={filters.status ?? ""}
-            onChange={(event) =>
-              changeFilters({
-                ...filters,
-                status:
-                  (event.target.value as "active" | "completed") || undefined,
-              })
-            }
-          >
-            <option value="">All statuses</option>
-            <option value="active">Active</option>
-            <option value="completed">Completed</option>
-          </select>
-        </div>
-
-        <div className="task-field">
-          <button
-            className="button button-secondary"
-            type="button"
-            disabled={!hasFilters}
-            onClick={() => changeFilters({})}
-          >
-            Clear filters
-          </button>
-        </div>
-      </fieldset>
+      </div>
 
       {actionError && (
         <p className="task-error" role="alert">
@@ -473,28 +416,24 @@ export default function TasksPanel({
           <li
             className={`quest-item ${
               task.isCompleted ? "task-item-completed" : ""
-            }`}
+            } ${celebratedIds.includes(task.id) ? "quest-just-completed" : ""}`}
             key={task.id}
           >
-            <span className="quest-marker" aria-hidden="true">
-              {task.isCompleted ? "✓" : "◇"}
-            </span>
-
+            <button className="quest-check" type="button" disabled={isBusy || task.isCompleted}
+              aria-label={task.isCompleted ? `${task.title} completed` : `Complete ${task.title}`}
+              aria-busy={completingId === task.id} onClick={() => void handleComplete(task)}>
+              {completingId === task.id ? "…" : task.isCompleted ? "✓" : ""}
+            </button>
             <div className="quest-description">
               <h3>{task.title}</h3>
               <p className="muted">
-                {task.kind === "daily" ? "Daily quest" : "One-time quest"}
-                {" · "}
-                {difficultyLabels[task.difficulty]}
+                {task.isCompleted ? "Completed" : task.kind === "daily" ? "Daily" : "One-time"}
+                {!task.isCompleted && ` · ${difficultyLabels[task.difficulty]}`}
               </p>
 
-              {task.isCompleted && (
-                <span className="task-completed-label">
-                  {task.kind === "daily" ? "Completed today" : "Completed"}
-                </span>
-              )}
             </div>
 
+            <div className="quest-reward-text">+{task.difficulty === "easy" ? 20 : task.difficulty === "medium" ? 40 : 60} XP&nbsp; +{task.difficulty === "easy" ? 10 : task.difficulty === "medium" ? 20 : 30} gold</div>
             <div className="task-actions">
               {confirmDeleteId === task.id ? (
                 <>
@@ -519,18 +458,15 @@ export default function TasksPanel({
                 </>
               ) : (
                 <>
-                  {!task.isCompleted && (
-                    <button
-                      className="button button-primary task-complete-button"
-                      type="button"
-                      disabled={isBusy}
-                      onClick={() => void handleComplete(task)}
-                      aria-label={`Complete ${task.title}`}
-                    >
-                      {completingId === task.id ? "Completing…" : "Complete"}
-                    </button>
-                  )}
-
+                  {!task.isCompleted && <button className="task-edit-button" type="button" disabled={isBusy} aria-label={`Edit ${task.title}`}
+                    onClick={() => {
+                      setEditingTask(task); setTitle(task.title); setKind(task.kind); setDifficulty(task.difficulty);
+                      setConfirmDeleteId(null); setActionError(""); setNotice(""); setIsCreateOpen(true);
+                      window.requestAnimationFrame(() => {
+                        document.getElementById("new-quest-form")?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+                        document.getElementById("task-title")?.focus({ preventScroll: true });
+                      });
+                    }}>Edit</button>}
                   <button
                     className="task-delete-button"
                     type="button"
@@ -592,10 +528,10 @@ export default function TasksPanel({
         </div>
       )}
 
-      <p className="section-footnote">
-        Daily quests reset with your account’s local day. Use Refresh to check
-        for updates.
-      </p>
+      {tasks.length > 0 && <div className="quest-completion">
+        <p>{tasks.filter(task => task.isCompleted).length} of {tasks.length}{nextCursor ? " loaded" : ""} quests completed</p>
+        <progress aria-label="Completed quests" value={tasks.filter(task => task.isCompleted).length} max={tasks.length} />
+      </div>}
     </section>
   );
 }

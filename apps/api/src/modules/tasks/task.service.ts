@@ -45,6 +45,7 @@ function serializeTask(
     kind: task.kind,
     difficulty: task.difficulty,
     isCompleted,
+    canChangeKind: (task.completionVersion ?? 0) === 0,
     createdAt: task.createdAt.toISOString(),
   };
 }
@@ -200,4 +201,27 @@ export async function deleteTask(
   if (result.matchedCount === 0) {
     throw new AppError(404, "TASK_NOT_FOUND", "This quest could not be found.");
   }
+}
+
+export async function updateTask(userId: Types.ObjectId, taskId: string, input: CreateTaskInput) {
+  const user = await User.findById(userId).select("timeZone").lean();
+  if (!user) throw new AppError(401, "UNAUTHENTICATED", "Please sign in to continue.");
+  const ownerFilter = { _id: new Types.ObjectId(taskId), userId, deletedAt: null };
+  const current = await Task.findOne(ownerFilter).lean();
+  if (!current) throw new AppError(404, "TASK_NOT_FOUND", "This quest could not be found.");
+  const occurrenceKey = current.kind === "once" ? "once" : getLocalDateKey(new Date(), user.timeZone);
+  const completion = await TaskCompletion.exists({ userId, taskId: current._id, occurrenceKey });
+  if (completion) throw new AppError(409, "TASK_COMPLETED", "Completed quests cannot be edited.");
+  if (current.kind !== input.kind && (current.completionVersion ?? 0) > 0) {
+    throw new AppError(409, "TASK_KIND_LOCKED", "The repeat type cannot change after a quest has been completed.");
+  }
+  // Completion increments this version atomically. Refuse an edit if a completion
+  // committed after the check above, including one from another tab.
+  const task = await Task.findOneAndUpdate(
+    { ...ownerFilter, kind: current.kind, completionVersion: current.completionVersion ?? { $exists: false } },
+    { $set: { title: input.title, kind: input.kind, difficulty: input.difficulty } },
+    { new: true, runValidators: true },
+  );
+  if (!task) throw new AppError(409, "TASK_CHANGED", "This quest changed. Refresh your quests before editing.");
+  return serializeTask(task, false);
 }

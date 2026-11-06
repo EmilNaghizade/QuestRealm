@@ -1,0 +1,264 @@
+:root {
+  --background: #f7f6f2;
+  --surface: #f7f6f2;
+  --surface-raised: #fbfaf7;
+  --surface-muted: #e5e4e0;
+  --text: #171917;
+  --text-muted: #636461;
+  --border: #deddd7;
+  --primary: #3d6242;
+  --on-primary: #ffffff;
+  --primary-soft: #e2e7dc;
+  --accent: #8d793b;
+  --accent-soft: #efe9d6;
+  --radius: 8px;
+  --shadow: none;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  --font-heading: var(--font-body);
+}
+:root[data-theme="dark"] {
+  --background: #202320;
+  --surface: #202320;
+  --surface-raised: #292e29;
+  --surface-muted: #383e38;
+  --text: #efefe8;
+  --text-muted: #acb3a9;
+  --border: #3d443c;
+  --primary: #a4c39b;
+  --on-primary: #202b20;
+  --primary-soft: #323f31;
+  --accent: #d7bf79;
+  --accent-soft: #403c2b;
+}
+body { background: var(--background); font-size: 16px; }
+h1 { font-size: 46px; letter-spacing: -1px; margin-bottom: 2px; }
+h2 { font-size: 27px; letter-spacing: -.5px; }
+.button { border-radius: 7px; min-height: 40px; padding: 8px 16px; font-size: 15px; font-weight: 500; }
+.button:hover { transform: none; filter: brightness(.96); }
+.button:disabled { cursor: not-allowed; opacity: .55; }
+.brand strong, .character-brand { font-family: Georgia, serif; font-size: 32px; letter-spacing: -1.5px; font-weight: 400; }
+.brand-mark, .brand small { display: none; }
+.app-shell { grid-template-columns: 248px minmax(0, 1fr); }
+.sidebar { padding: 26px 14px; background: transparent; }
+.sidebar .brand { padding: 0 19px; }
+.navigation { margin-top: 48px; gap: 10px; }
+.navigation-item { gap: 24px; padding: 10px 20px; font-size: 20px; border-radius: 6px; }
+.navigation-item > span { font-size: 27px; font-weight: 400; }
+.navigation-item-unavailable { opacity: .75; }
+.navigation-item small { font-size: 9px; }
+.sidebar-settings { display: flex; align-items: center; gap: 24px; border: 0; border-top: 1px solid var(--border); padding: 20px; margin-top: auto; background: transparent; color: var(--text-muted); text-align: left; font-size: 16px; }
+.sidebar-settings span { font-size: 26px; }
+.main-content { max-width: 1440px; padding: 82px 36px 48px 58px; }
+.page-header { align-items: end; margin-bottom: 24px; }
+.page-header .eyebrow { display: none; }
+.page-header .muted { font-size: 21px; }
+.theme-button { font-size: 12px; padding: 6px 10px; }
+.account-bar { position: absolute; top: 10px; right: 20px; z-index: 2; border: 0; background: transparent; padding: 0; font-size: 16px; }
+.account-bar strong { font-weight: 500; }
+.account-bar .button { min-height: 32px; font-size: 12px; background: transparent; }
+.player-strip { padding: 0 0 28px; border-top: 0; gap: 30px; }
+.player-strip .badge { padding: 0; color: var(--text); background: transparent; font-size: 20px; white-space: nowrap; }
+.player-xp { flex: 0 1 560px; gap: 24px; }
+.player-xp progress { max-width: none; height: 10px; }
+.player-xp span { font-size: 16px; }
+.player-gold { padding-left: 28px; border-left: 1px solid var(--border); font-size: 18px; color: var(--text); }
+.dashboard-grid.minimal-dashboard { grid-template-columns: minmax(0, 1fr) 300px; gap: 34px; margin-top: 34px; }
+.minimal-dashboard > .quests-card { padding: 0; }
+.dashboard-side { border-left: 1px solid var(--border); padding-left: 28px; gap: 30px; min-height: 560px; }
+.minimal-dashboard .focus-card { padding: 0; border: 0; border-radius: 0; text-align: left; background: transparent; }
+.minimal-dashboard .focus-card h2 { font-size: 26px; }
+.minimal-dashboard .timer-preview { font-size: 66px; margin-top: 16px; letter-spacing: -2px; font-weight: 400; }
+.focus-caption { margin-top: 0; font-size: 17px; }
+.minimal-dashboard .focus-card .button { margin-top: 26px; min-height: 50px; font-size: 18px; }
+.focus-today { margin-top: 16px; font-size: 16px; color: var(--text-muted); }
+.focus-details-link { display: inline-block; font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+.conquest-preview { border-top: 1px solid var(--border); padding-top: 25px; }
+.conquest-preview h2 { font-size: 23px; }
+.conquest-name { font-size: 21px; margin-top: 18px; font-weight: 600; }
+.conquest-name span { margin-right: 12px; color: var(--text-muted); }
+.conquest-preview .muted { margin: 4px 0 0 33px; font-size: 15px; }
+.task-tabs { display: flex; gap: 24px; margin-top: 14px; border-bottom: 1px solid var(--border); }
+.task-tabs button { min-height: 48px; padding: 8px 10px 12px; border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--text-muted); font-size: 18px; }
+.task-tabs button[aria-pressed="true"] { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+.task-create-panel[hidden] { display: none; }
+.minimal-dashboard .task-create-panel { margin-top: 18px; }
+.task-list { margin-top: 10px; }
+.minimal-dashboard .quest-item { padding-block: 19px; gap: 24px; border-top: 0; border-bottom: 1px solid var(--border); flex-wrap: nowrap; }
+.quest-check { display: grid; place-items: center; flex-shrink: 0; width: 30px; height: 30px; border: 1.5px solid var(--text-muted); border-radius: 50%; padding: 0; background: transparent; color: var(--on-primary); font-size: 20px; }
+.quest-check:disabled { opacity: 1; cursor: default; }
+.task-item-completed .quest-check { border-color: var(--primary); background: var(--primary); }
+.quest-description { flex: 1; }
+.quest-description h3 { font-size: 19px; font-weight: 500; }
+.quest-description p { font-size: 15px; margin-top: 0; }
+.task-item-completed .quest-description h3 { text-decoration: line-through; }
+.quest-reward-text { margin-left: auto; white-space: nowrap; font-size: 16px; }
+.task-item-completed .quest-reward-text { color: var(--text-muted); }
+.minimal-dashboard .task-actions { width: auto; flex: 0 0 auto; margin: 0; gap: 4px; }
+.task-actions > .task-delete-button { padding: 4px; font-size: 11px; color: var(--text-muted); }
+.quest-completion { margin-top: 24px; color: var(--text-muted); font-size: 16px; }
+.quest-completion progress { margin-top: 10px; height: 5px; }
+.card { box-shadow: none; }
+/* Shared onboarding: a quiet wordmark, clear forms and thin dividers. */
+.auth-page { padding: 56px 32px; }
+.auth-layout { max-width: 1000px; grid-template-columns: 1fr 390px; gap: 80px; }
+.auth-story { min-height: 460px; }
+.auth-story-copy h1 { font-size: clamp(38px, 5vw, 58px); line-height: 1.12; }
+.auth-story-copy .eyebrow, .auth-form-card > .badge { display: none; }
+.auth-story-copy > p { font-size: 17px; }
+.auth-story-footer { color: var(--text-muted); font-family: var(--font-body); font-style: normal; font-size: 14px; }
+.auth-form-card { border: 0; border-left: 1px solid var(--border); border-radius: 0; padding: 10px 0 10px 44px; background: transparent; }
+.auth-form-card h2 { margin: 0; font-size: 30px; }
+.auth-field input, .task-field input, .task-field select, .focus-field input { border-radius: 6px; background-color: var(--surface-raised); }
+.auth-field label { font-size: 14px; font-weight: 500; }
+.auth-submit { min-height: 46px; }
+.auth-switch { font-size: 13px; }
+.character-page { max-width: 1060px; padding-top: 60px; }
+.character-brand { display: inline-block; margin-bottom: 48px; color: var(--text); }
+.character-page-header { text-align: left; margin-bottom: 32px; }
+.character-page-header .muted { font-size: 19px; }
+.character-options { gap: 0 28px; }
+.character-option { align-items: start; padding: 26px 34px 26px 16px; border: 0; border-top: 1px solid var(--border); border-radius: 0; background: transparent; text-align: left; box-shadow: none; }
+.character-option-selected { background: var(--primary-soft); box-shadow: inset 3px 0 var(--primary); }
+.character-option input { top: 30px; }
+.character-option-name { font-family: var(--font-body); font-size: 23px; }
+.character-role { font-size: 14px; font-weight: 500; }
+.character-description { font-size: 14px; }
+.character-confirm { grid-template-columns: 1fr auto; border-top: 1px solid var(--border); padding-top: 24px; text-align: left; align-items: center; }
+.character-confirm > p { font-size: 13px; }
+.character-confirm .auth-error { grid-column: 1 / -1; }
+/* Focus shares the same tab and divider language as Today. */
+#focus .focus-center-layout { gap: 32px; }
+#focus .focus-center-layout > .card, #focus .focus-stats-layout > .card { padding: 28px 0; border: 0; border-top: 1px solid var(--border); border-radius: 0; background: transparent; }
+#focus .focus-center .eyebrow { display: none; }
+#focus .focus-mode-buttons { gap: 18px; border-bottom: 1px solid var(--border); }
+#focus .focus-mode-buttons .button { border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: transparent; color: var(--text-muted); }
+#focus .focus-mode-buttons .button[aria-pressed="true"] { color: var(--primary); border-bottom-color: var(--primary); }
+#focus .focus-timer-value { font-family: var(--font-body); font-weight: 400; letter-spacing: -4px; font-size: clamp(72px, 12vw, 116px); }
+#focus .focus-session-summary { display: flex; justify-content: center; background: transparent; border: 0; gap: 12px; }
+#focus .focus-stat-card { background: transparent; border: 0; border-left: 1px solid var(--border); border-radius: 0; }
+#focus .focus-stat-card:first-child { border-left: 0; }
+#focus .focus-history-duration { background: transparent; color: var(--text); }
+#focus .focus-history-icon { background: var(--primary-soft); border-radius: 50%; }
+@media (max-width: 1200px) {
+  .app-shell { grid-template-columns: 210px minmax(0, 1fr); }
+  .main-content { padding-inline: 32px; }
+  .brand strong { font-size: 28px; }
+  .dashboard-grid.minimal-dashboard { grid-template-columns: minmax(0, 1fr) 250px; gap: 24px; }
+  .dashboard-side { padding-left: 24px; }
+  .minimal-dashboard .quest-item { gap: 14px; flex-wrap: wrap; }
+  .quest-reward-text { font-size: 13px; }
+  .quest-description h3 { font-size: 17px; }
+  .player-xp { flex-direction: row; align-items: center; }
+}
+@media (max-width: 1000px) {
+  .dashboard-grid.minimal-dashboard { grid-template-columns: 1fr; }
+  .dashboard-side { grid-template-columns: 1fr 1fr; border-left: 0; border-top: 1px solid var(--border); padding: 24px 0 0; min-height: 0; }
+  .conquest-preview { border: 0; padding: 0 0 0 24px; border-left: 1px solid var(--border); }
+  .player-strip { flex-wrap: wrap; gap: 16px; }
+  .player-xp { flex: 1; }
+  .player-gold { padding-left: 16px; }
+}
+@media (max-width: 850px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main-content { padding-top: 32px; }
+  .account-bar { position: static; justify-content: flex-end; padding: 8px 20px; font-size: 14px; }
+  .mobile-navigation-bar { background: var(--surface); box-shadow: none; }
+  .auth-layout { grid-template-columns: 1fr; max-width: 440px; gap: 38px; }
+  .auth-story { min-height: auto; }
+  .auth-form-card { border-left: 0; border-top: 1px solid var(--border); padding: 32px 0 0; }
+}
+@media (max-width: 600px) {
+  h1 { font-size: 36px; }
+  h2 { font-size: 24px; }
+  .main-content { padding: 26px 20px 40px; }
+  .page-header .muted { font-size: 17px; }
+  .theme-button { font-size: 0; gap: 0; min-width: 36px; }
+  .theme-button span { font-size: 20px; }
+  .player-strip { gap: 14px; }
+  .player-strip .badge { font-size: 17px; }
+  .player-xp { order: 3; flex-basis: 100%; gap: 14px; }
+  .player-xp span { font-size: 13px; }
+  .player-gold { margin-left: auto; font-size: 16px; border: 0; padding: 0; }
+  .dashboard-grid.minimal-dashboard { margin-top: 26px; }
+  .minimal-dashboard .quest-item { column-gap: 12px; row-gap: 8px; }
+  .quest-description { min-width: 0; flex-basis: calc(100% - 44px); }
+  .quest-reward-text { margin-left: 42px; }
+  .minimal-dashboard .task-actions { margin-left: auto; }
+  .task-tabs { gap: 14px; }
+  .task-tabs button { font-size: 16px; }
+  .dashboard-side { grid-template-columns: 1fr; }
+  .conquest-preview { border-left: 0; border-top: 1px solid var(--border); padding: 24px 0 0; }
+  .auth-page { padding: 32px 22px; }
+  .character-page { padding: 32px 20px; }
+  .character-brand { margin-bottom: 32px; }
+  .character-options { grid-template-columns: 1fr; }
+  .character-confirm { grid-template-columns: 1fr; justify-items: stretch; }
+  #focus .focus-stat-cards { grid-template-columns: 1fr; }
+  #focus .focus-stat-card { border-left: 0; border-bottom: 1px solid var(--border); padding-inline: 0; }
+}
+.navigation-item svg { flex-shrink: 0; }
+.gold-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: #cfb653; margin-right: 6px; }
+
+.dashboard-side { align-content: start; }
+@media (min-width: 1201px) { .dashboard-grid.minimal-dashboard { grid-template-columns: minmax(0, 1fr) 326px; } }
+.minimal-dashboard .quest-item { position: relative; }
+@media (max-width: 600px) {
+  .minimal-dashboard .quest-item { flex-wrap: wrap; }
+  .minimal-dashboard .quest-description { flex: 1 1 calc(100% - 44px); }
+  .minimal-dashboard .quest-check { align-self: flex-start; margin-top: 3px; }
+}
+
+.task-editor-heading { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px 0; }
+.task-edit-button { min-height: 40px; padding: 4px 8px; border: 0; background: transparent; color: var(--primary); font-size: 12px; }
+.task-kind-note { grid-column: 1 / -1; font-size: 12px; }
+.task-field select:disabled { opacity: .6; cursor: not-allowed; }
+
+/* Keep quest actions visible and give them their own space. */
+.minimal-dashboard .quest-item {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  column-gap: 18px;
+  row-gap: 8px;
+  align-items: center;
+  padding-block: 20px;
+}
+.minimal-dashboard .quest-check { grid-column: 1; grid-row: 1 / 3; align-self: center; margin: 0; }
+.minimal-dashboard .quest-description { grid-column: 2; grid-row: 1 / 3; }
+.minimal-dashboard .quest-reward-text { grid-column: 3; grid-row: 1; margin: 0; text-align: right; font-size: 14px; }
+.minimal-dashboard .task-actions {
+  grid-column: 3;
+  grid-row: 2;
+  position: static;
+  opacity: 1;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  background: transparent;
+}
+.minimal-dashboard .task-actions .task-edit-button,
+.minimal-dashboard .task-actions .task-delete-button,
+.minimal-dashboard .task-actions .task-cancel-button {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-raised);
+  font-size: 12px;
+  font-weight: 500;
+}
+.minimal-dashboard .task-actions .task-edit-button { color: var(--primary); }
+.minimal-dashboard .task-actions .task-delete-button { color: var(--coral); }
+.minimal-dashboard .task-actions button:hover { border-color: currentColor; }
+@media (max-width: 600px) {
+  .minimal-dashboard .quest-item { grid-template-columns: 30px minmax(0, 1fr); column-gap: 12px; row-gap: 12px; }
+  .minimal-dashboard .quest-check { grid-row: 1; align-self: start; margin-top: 4px; }
+  .minimal-dashboard .quest-description { grid-row: 1; }
+  .minimal-dashboard .quest-reward-text { grid-column: 2; grid-row: 2; text-align: left; }
+  .minimal-dashboard .task-actions { grid-column: 2; grid-row: 3; justify-content: flex-start; }
+  .minimal-dashboard .task-actions .task-edit-button,
+  .minimal-dashboard .task-actions .task-delete-button,
+  .minimal-dashboard .task-actions .task-cancel-button { min-height: 44px; padding-inline: 16px; font-size: 13px; }
+}

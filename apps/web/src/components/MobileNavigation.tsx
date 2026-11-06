@@ -176,8 +176,8 @@ export default function MobileNavigation() {
           >
             <span aria-hidden="true">▦</span>
             <span>
-              <strong>Dashboard</strong>
-              <small>Your hero and daily quests</small>
+              <strong>Today</strong>
+              <small>Your daily quests</small>
             </span>
             <span className="mobile-menu-arrow" aria-hidden="true">
               →
@@ -194,7 +194,7 @@ export default function MobileNavigation() {
           >
             <span aria-hidden="true">◷</span>
             <span>
-              <strong>Focus Center</strong>
+              <strong>Focus</strong>
               <small>Your timer, insights and history</small>
             </span>
             <span className="mobile-menu-arrow" aria-hidden="true">
@@ -220,7 +220,7 @@ export default function MobileNavigation() {
           >
             <span aria-hidden="true">◇</span>
             <span>
-              <strong>World Map</strong>
+              <strong>Kingdoms</strong>
               <small>A kingdom to discover</small>
             </span>
             <span className="badge badge-muted">Soon</span>

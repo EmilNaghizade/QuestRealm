@@ -1,0 +1,44 @@
+.player-strip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  border-block: 1px solid var(--border);
+}
+.player-name { font-weight: 700; overflow-wrap: anywhere; }
+.player-xp { display: flex; align-items: center; gap: 12px; flex: 1; }
+.player-xp progress { max-width: 160px; height: 5px; }
+.player-xp span { color: var(--text-muted); font-size: 11px; white-space: nowrap; }
+.player-gold { color: var(--accent); font-size: 13px; white-space: nowrap; }
+.dashboard-grid.minimal-dashboard { grid-template-columns: minmax(0, 1.8fr) minmax(260px, 1fr); align-items: start; gap: 28px; }
+.minimal-dashboard > .quests-card { grid-column: auto; padding: 24px 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.dashboard-side { display: grid; gap: 20px; min-width: 0; }
+.minimal-dashboard .focus-card { text-align: center; box-shadow: none; }
+.minimal-dashboard .focus-card .section-heading { justify-content: center; gap: 12px; }
+.minimal-dashboard .focus-card > .muted { margin-inline: auto; }
+.minimal-dashboard .focus-card .button { margin-top: 24px; width: 100%; }
+.minimal-dashboard .timer-preview { font-weight: 400; }
+.hero-details { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.hero-details > summary { display: flex; justify-content: space-between; padding: 16px 20px; cursor: pointer; font-size: 13px; font-weight: 700; list-style: none; }
+.hero-details > summary::-webkit-details-marker { display: none; }
+.hero-details .card { border: 0; border-radius: 0; box-shadow: none; }
+.minimal-dashboard .task-create-panel { border-radius: 8px; background: transparent; }
+.minimal-dashboard .quests-card > .task-form-fields { padding-inline: 0; gap: 10px; }
+.minimal-dashboard .quest-marker { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 50%; background: transparent; font-size: 16px; }
+.minimal-dashboard .quest-item { gap: 12px; }
+.minimal-dashboard .task-actions { flex-shrink: 1; justify-content: flex-end; }
+.minimal-dashboard .task-delete-button { background: transparent; border-color: transparent; }
+@media (max-width: 1100px) {
+  .dashboard-grid.minimal-dashboard { grid-template-columns: minmax(0, 1fr) minmax(240px, .8fr); gap: 20px; }
+  .player-xp { flex-direction: column; align-items: start; gap: 4px; }
+  .minimal-dashboard .task-actions { width: 100%; }
+  .minimal-dashboard .quest-item { flex-wrap: wrap; }
+  .minimal-dashboard .quest-description { flex: 1; }
+}
+@media (max-width: 650px) {
+  .dashboard-grid.minimal-dashboard { grid-template-columns: 1fr; }
+  .player-strip { flex-wrap: wrap; gap: 10px; }
+  .player-name { flex: 1; }
+  .player-xp { order: 4; flex-basis: 100%; flex-direction: row; align-items: center; }
+  .player-xp progress { max-width: none; flex: 1; }
+}
