@@ -1,18 +1,14 @@
 const CACHE_PREFIX = "questrealm-offline-";
-const CACHE_NAME = `${CACHE_PREFIX}v2`;
+const CACHE_NAME = `${CACHE_PREFIX}v3`;
 const OFFLINE_URL = "/offline.html";
+const OFFLINE_SCRIPT = "/offline.js";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
 
-      await cache.add(
-        new Request(OFFLINE_URL, {
-          cache: "reload",
-          credentials: "omit",
-        }),
-      );
+      await cache.addAll([OFFLINE_URL, OFFLINE_SCRIPT].map(url => new Request(url, { cache: "reload", credentials: "omit" })));
     })(),
   );
 });
@@ -66,6 +62,15 @@ self.addEventListener("fetch", (event) => {
 
   // API requests always go directly to the network.
   if (url.pathname === "/api" || url.pathname.startsWith("/api/")) {
+    return;
+  }
+
+  // The standalone fallback needs only its own translation script.
+  if (url.pathname === OFFLINE_SCRIPT) {
+    event.respondWith(fetch(request).catch(async () => {
+      const cached = await (await caches.open(CACHE_NAME)).match(OFFLINE_SCRIPT);
+      return cached || Response.error();
+    }));
     return;
   }
 

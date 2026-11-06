@@ -1,3 +1,4 @@
+import { getLanguage } from "./lib/i18n";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
@@ -20,6 +21,7 @@ try {
 }
 
 document.documentElement.dataset.theme = theme;
+document.documentElement.lang = getLanguage();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -34,3 +36,5 @@ import "./styles/minimal.css";
 import "./styles/motion.css";
 
 import "./styles/rpg.css";
+
+import "./styles/account.css";

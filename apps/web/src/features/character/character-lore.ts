@@ -1,0 +1,8 @@
+export const characterLore: Record<string, { motto: string; story: string; practice: string }> = {
+  knight: { motto: "Keep the promises you make to yourself.", story: "You carry no crown, only a promise: to return tomorrow and try again. Every finished quest strengthens the resolve behind your shield.", practice: "Choose one small commitment and see it through." },
+  ranger: { motto: "The path appears one step at a time.", story: "Beyond familiar trails lies a world of possibilities. Your strength is curiosity, your compass the work that matters to you.", practice: "Explore one unfamiliar idea, then put it into practice." },
+  mage: { motto: "Attention turns knowledge into power.", story: "Your spellbook is a record of questions asked and lessons learned. Quiet moments of study make room for extraordinary discoveries.", practice: "Protect a little uninterrupted time to learn." },
+  guardian: { motto: "Protect what helps you grow.", story: "You stand watch over your time, your energy, and the people you care for. The strongest foundations are built with patient, ordinary care.", practice: "Make space for a habit that restores your energy." },
+  rogue: { motto: "Change your approach. Keep your purpose.", story: "Where others see a closed gate, you look for another way. Progress belongs to those willing to adapt and begin again.", practice: "Break a difficult task into a smaller first move." },
+  bard: { motto: "Every day deserves a line in your story.", story: "You gather fragments of inspiration and give them a voice. A page written, a skill practised, a new idea shared: these are your songs.", practice: "Create something small before waiting for inspiration." },
+};

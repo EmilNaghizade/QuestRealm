@@ -1,8 +1,8 @@
 import { apiRequest } from "../../lib/api";
 import type { PlayerBalance } from "../auth/auth-api";
 export type EquipmentSlot = "weapon" | "armor" | "charm";
-export type MarketItem = { id: string; name: string; slot: EquipmentSlot; price: number; description: string };
-export type MarketState = { items: MarketItem[]; ownedIds: string[]; equipped: Record<EquipmentSlot, string | null>; balance: PlayerBalance };
+export type MarketItem = { id: string; name: string; slot: EquipmentSlot; price: number; description: string; characterId?: string };
+export type MarketState = { characterId: string; items: MarketItem[]; ownedIds: string[]; equipped: Record<EquipmentSlot, string | null>; balance: PlayerBalance };
 export async function getMarket(signal?: AbortSignal): Promise<MarketState> {
   return (await apiRequest<{ data: MarketState }>("/market", { signal })).data;
 }

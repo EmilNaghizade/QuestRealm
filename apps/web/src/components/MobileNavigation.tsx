@@ -1,3 +1,4 @@
+import { t } from "../lib/i18n";
 import { getPageFromHash } from "../lib/navigation";
 import BrandLogo from "./BrandLogo";
 import { useEffect, useRef, useState } from "react";
@@ -105,7 +106,7 @@ export default function MobileNavigation() {
         <button
           className="mobile-menu-toggle"
           type="button"
-          aria-label="Open navigation menu"
+          aria-label={t("Open navigation menu")}
           aria-haspopup="dialog"
           aria-expanded={isOpen}
           aria-controls="mobile-navigation-dialog"
@@ -141,14 +142,14 @@ export default function MobileNavigation() {
       >
         <div className="mobile-menu-heading">
           <div>
-            <p className="eyebrow">Your adventure</p>
-            <h2 id="mobile-menu-title">Explore your realm</h2>
+            <p className="eyebrow">{t("Your adventure")}</p>
+            <h2 id="mobile-menu-title">{t("Explore your realm")}</h2>
           </div>
 
           <button
             className="mobile-menu-close"
             type="button"
-            aria-label="Close navigation menu"
+            aria-label={t("Close navigation menu")}
             autoFocus
             onClick={closeMenu}
           >
@@ -156,7 +157,7 @@ export default function MobileNavigation() {
           </button>
         </div>
 
-        <nav className="mobile-menu-links" aria-label="Mobile navigation">
+        <nav className="mobile-menu-links" aria-label={t("Mobile navigation")}>
           <a
             className={`mobile-menu-link ${
               page === "dashboard" ? "mobile-menu-link-active" : ""
@@ -167,8 +168,8 @@ export default function MobileNavigation() {
           >
             <span aria-hidden="true">▦</span>
             <span>
-              <strong>Today</strong>
-              <small>Your daily quests</small>
+              <strong>{t("Today")}</strong>
+              <small>{t("Your daily quests")}</small>
             </span>
             <span className="mobile-menu-arrow" aria-hidden="true">
               →
@@ -185,8 +186,8 @@ export default function MobileNavigation() {
           >
             <span aria-hidden="true">◷</span>
             <span>
-              <strong>Focus</strong>
-              <small>Your timer, insights and history</small>
+              <strong>{t("Focus")}</strong>
+              <small>{t("Your timer, insights and history")}</small>
             </span>
             <span className="mobile-menu-arrow" aria-hidden="true">
               →
@@ -194,20 +195,15 @@ export default function MobileNavigation() {
           </a>
 
           <a className={`mobile-menu-link ${page === "character" ? "mobile-menu-link-active" : ""}`} href="#character" aria-current={page === "character" ? "page" : undefined} onClick={closeMenu}>
-            <span aria-hidden="true">♙</span><span><strong>Character</strong><small>Your story, equipment and market</small></span><span aria-hidden="true">→</span>
+            <span aria-hidden="true">♙</span><span><strong>{t("Character")}</strong><small>{t("Your story, equipment and market")}</small></span><span aria-hidden="true">→</span>
           </a>
 
-          <span
-            className="mobile-menu-link mobile-menu-link-unavailable"
-            aria-disabled="true"
-          >
-            <span aria-hidden="true">◇</span>
-            <span>
-              <strong>Kingdoms</strong>
-              <small>A kingdom to discover</small>
-            </span>
-            <span className="badge badge-muted">Soon</span>
-          </span>
+          <a className={`mobile-menu-link ${page === "kingdoms" ? "mobile-menu-link-active" : ""}`} href="#kingdoms" aria-current={page === "kingdoms" ? "page" : undefined} onClick={closeMenu}><span aria-hidden="true">⚑</span><span><strong>{t("Kingdoms")}</strong><small>{t("Your frontier and conquered lands")}</small></span><span aria-hidden="true">→</span></a>
+          <a className={`mobile-menu-link ${page === "profile" ? "mobile-menu-link-active" : ""}`} href="#profile" aria-current={page === "profile" ? "page" : undefined} onClick={closeMenu}><span aria-hidden="true">♙</span><span><strong>{t("Profile")}</strong></span></a>
+
+          <a className={`mobile-menu-link ${page === "achievements" ? "mobile-menu-link-active" : ""}`} href="#achievements" aria-current={page === "achievements" ? "page" : undefined} onClick={closeMenu}><span aria-hidden="true">✦</span><span><strong>{t("Achievements")}</strong><small>{t("Achievements & daily streak")}</small></span></a>
+          <a className={`mobile-menu-link ${page==="library"?"mobile-menu-link-active":""}`} href="#library" aria-current={page==="library"?"page":undefined} onClick={closeMenu}><span aria-hidden="true">▤</span><span><strong>{t("Reading library")}</strong><small>{t("Books, articles and notes")}</small></span></a>
+<a className={`mobile-menu-link ${page === "settings" ? "mobile-menu-link-active" : ""}`} href="#settings" aria-current={page === "settings" ? "page" : undefined} onClick={closeMenu}><span aria-hidden="true">⚙</span><span><strong>{t("Settings")}</strong></span></a>
         </nav>
 
         <div className="mobile-menu-footer">
@@ -217,12 +213,10 @@ export default function MobileNavigation() {
               type="button"
               onClick={openInstallation}
             >
-              <span aria-hidden="true">↓</span>
-              Install QuestRealm
-            </button>
+              <span aria-hidden="true">↓</span> {t("Install QuestRealm")} </button>
           )}
 
-          <p>Small steps. Great adventures.</p>
+          <p>{t("Small steps. Great adventures.")}</p>
         </div>
       </dialog>
     </>

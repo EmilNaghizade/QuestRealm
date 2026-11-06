@@ -1,3 +1,4 @@
+import { t } from "../../lib/i18n";
 import { useState } from "react";
 import "./knight-preview.css";
 
@@ -20,7 +21,7 @@ export default function KnightPreview() {
       <div
         className="knight-preview-stage"
         role="img"
-        aria-label={`Knight wearing ${armorEquipped ? "steel armor" : "a green tunic"}${swordEquipped ? " and holding a sword" : ""}`}
+        aria-label={t(`Knight wearing ${armorEquipped ? "steel armor" : "a green tunic"}${swordEquipped ? " and holding a sword" : ""}`)}
       >
         <img src="/characters/knight/base.png" alt="" draggable={false} />
         {armorEquipped && (

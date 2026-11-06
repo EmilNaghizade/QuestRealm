@@ -1,3 +1,4 @@
+import { t } from "../lib/i18n";
 import { useEffect, useState } from "react";
 import "./connection-status.css";
 
@@ -33,11 +34,8 @@ export default function ConnectionStatus() {
         </span>
 
         <div className="connection-banner-copy">
-          <strong>You’re offline.</strong>
-          <p>
-            Reconnect to sync your timer and save changes. Quest rewards require
-            a connection.
-          </p>
+          <strong>{t("You’re offline.")}</strong>
+          <p> {t("Reconnect to sync your timer and save changes. Quest rewards require a connection.")} </p>
         </div>
       </div>
     </div>

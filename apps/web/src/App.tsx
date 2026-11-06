@@ -1,3 +1,4 @@
+import { t, useLanguage, setLanguage, isLanguage } from "./lib/i18n";
 import { useCallback, useEffect, useState } from "react";
 import ConnectionStatus from "./components/ConnectionStatus";
 import InstallPrompt from "./components/InstallPrompt";
@@ -34,6 +35,10 @@ function AppContent() {
     setSession({ status: "anonymous" });
   }, []);
 
+  const handleProfileChanged = useCallback((user: AuthUser) => {
+    setSession(current => current.status !== "authenticated" ? current : { ...current, user: { ...current.user, displayName: user.displayName, timeZone: user.timeZone, language: user.language } });
+  }, []);
+
   const handleBalanceChanged = useCallback((balance: PlayerBalance) => {
     setSession((current) => {
       if (current.status !== "authenticated") {
@@ -60,6 +65,7 @@ function AppContent() {
         const user = await getCurrentUser(controller.signal);
 
         if (!controller.signal.aborted) {
+          setLanguage(isLanguage(user.language) ? user.language : "en");
           setSession({ status: "authenticated", user });
         }
       } catch (error) {
@@ -75,7 +81,7 @@ function AppContent() {
           message:
             error instanceof ApiError
               ? error.message
-              : "Unable to check your session. Please try again.",
+              : t("Unable to check your session. Please try again."),
         });
       }
     }
@@ -98,7 +104,7 @@ function AppContent() {
       setLogoutError(
         error instanceof ApiError
           ? error.message
-          : "Unable to sign out. Please try again.",
+          : t("Unable to sign out. Please try again."),
       );
     } finally {
       setIsLoggingOut(false);
@@ -110,8 +116,8 @@ function AppContent() {
       <main className="session-screen">
         <div className="session-panel" role="status">
           <span className="eyebrow">QuestRealm</span>
-          <h1>Preparing your adventure…</h1>
-          <p className="muted">Checking your session.</p>
+          <h1>{t("Preparing your adventure…")}</h1>
+          <p className="muted">{t("Checking your session.")}</p>
         </div>
       </main>
     );
@@ -121,10 +127,10 @@ function AppContent() {
     return (
       <main className="session-screen">
         <div className="card session-panel">
-          <h1>Let’s reconnect.</h1>
+          <h1>{t("Let’s reconnect.")}</h1>
 
           <p className="muted" role="alert">
-            {session.message}
+            {t(session.message)}
           </p>
 
           <button
@@ -134,9 +140,7 @@ function AppContent() {
               setSession({ status: "loading" });
               setRetryCount((current) => current + 1);
             }}
-          >
-            Try again
-          </button>
+          > {t("Try again")} </button>
         </div>
       </main>
     );
@@ -147,6 +151,7 @@ function AppContent() {
       <AuthScreen
         onAuthenticated={(user) => {
           setLogoutError("");
+          setLanguage(isLanguage(user.language) ? user.language : "en");
           setSession({ status: "authenticated", user });
         }}
       />
@@ -157,12 +162,12 @@ function AppContent() {
     <>
       <div className="account-bar">
         <span>
-          <strong>{session.user.displayName}</strong>
+          <a href="#profile"><strong>{session.user.displayName}</strong></a>
         </span>
 
         {logoutError && (
           <span className="account-bar-error" role="alert">
-            {logoutError}
+            {t(logoutError)}
           </span>
         )}
 
@@ -172,7 +177,7 @@ function AppContent() {
           disabled={isLoggingOut}
           onClick={() => void handleLogout()}
         >
-          {isLoggingOut ? "Signing out…" : "Sign out"}
+          {isLoggingOut ? t("Signing out…") : t("Sign out")}
         </button>
       </div>
 
@@ -205,6 +210,7 @@ function AppContent() {
                 user={session.user}
                 onSessionExpired={handleSessionExpired}
                 onBalanceChanged={handleBalanceChanged}
+                onProfileChanged={handleProfileChanged}
               />
             </FocusSoundProvider>
           </FocusProvider>
@@ -215,11 +221,14 @@ function AppContent() {
 }
 
 export default function App() {
+  const language = useLanguage();
   return (
+    <div lang={language}>
     <>
       <ConnectionStatus />
       <AppContent />
       <InstallPrompt />
     </>
+    </div>
   );
 }

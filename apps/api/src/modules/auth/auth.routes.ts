@@ -5,7 +5,7 @@ import { env } from "../../config/env.js";
 import { AppError } from "../../lib/app-error.js";
 import { getProgression } from "../character/progression.js";
 import { User, type UserRecord } from "./user.model.js";
-import { loginSchema, registerSchema } from "./auth.validation.js";
+import { loginSchema, registerSchema, profileSchema } from "./auth.validation.js";
 import { hashPassword, verifyPassword } from "./password.js";
 import {
   clearSessionCookie,
@@ -22,6 +22,7 @@ function publicUser(user: UserRecord & { _id: { toString(): string } }) {
     displayName: user.displayName,
     email: user.email,
     timeZone: user.timeZone,
+    language: user.language ?? "en",
     characterId: user.characterId,
     xp: user.xp,
     gold: user.gold,
@@ -108,6 +109,7 @@ authRouter.post("/register", authLimiter, async (request, response, next) => {
       email: input.email,
       passwordHash,
       timeZone: input.timeZone,
+      language: input.language,
     });
 
     await createSession(request, response, user._id);
@@ -214,4 +216,16 @@ authRouter.post("/logout", async (request, response, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+authRouter.patch("/profile", async (request, response, next) => {
+  try {
+    const session = await findSession(request);
+    if (!session) throw new AppError(401, "UNAUTHENTICATED", "Please sign in to continue.");
+    const result = profileSchema.safeParse(request.body);
+    if (!result.success) throw new AppError(400, "VALIDATION_ERROR", result.error.issues[0]?.message ?? "Check your profile details.");
+    const user = await User.findOneAndUpdate({ _id: session.userId }, { $set: result.data }, { new: true, runValidators: true });
+    if (!user) throw new AppError(401, "UNAUTHENTICATED", "Please sign in to continue.");
+    response.json({ data: { user: publicUser(user) } });
+  } catch (error) { next(error); }
 });

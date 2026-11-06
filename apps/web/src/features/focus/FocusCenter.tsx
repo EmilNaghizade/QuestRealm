@@ -1,3 +1,4 @@
+import { t, locale } from "../../lib/i18n";
 import {
   useEffect,
   useId,
@@ -28,10 +29,10 @@ function formatTime(milliseconds: number): string {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
 
-  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+  return t(`${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
     2,
     "0",
-  )}`;
+  )}`);
 }
 
 type ConfirmDialogProps = {
@@ -92,7 +93,7 @@ function ConfirmDialog({
           ↺
         </span>
 
-        <p className="eyebrow">Your focus journey</p>
+        <p className="eyebrow">{t("Your focus journey")}</p>
         <h2 id={titleId}>{title}</h2>
         <p className="focus-confirm-description" id={descriptionId}>
           {description}
@@ -105,9 +106,7 @@ function ConfirmDialog({
             autoFocus
             disabled={isSubmitting}
             onClick={onCancel}
-          >
-            Keep going
-          </button>
+          > {t("Keep going")} </button>
 
           <button
             className="button button-primary"
@@ -115,7 +114,7 @@ function ConfirmDialog({
             disabled={confirmDisabled || isSubmitting}
             onClick={onConfirm}
           >
-            {isSubmitting ? "Please wait…" : confirmLabel}
+            {isSubmitting ? t("Please wait…") : confirmLabel}
           </button>
         </div>
       </div>
@@ -164,7 +163,7 @@ function SettingsForm({ settings, disabled, onSave }: SettingsFormProps) {
       nextSettings.longBreakMinutes <= 120;
 
     if (!valid) {
-      setValidationError("Enter whole minutes within the allowed ranges.");
+      setValidationError(t("Enter whole minutes within the allowed ranges."));
       return;
     }
 
@@ -175,10 +174,10 @@ function SettingsForm({ settings, disabled, onSave }: SettingsFormProps) {
   return (
     <form onSubmit={handleSubmit}>
       <fieldset className="focus-settings-fields" disabled={disabled}>
-        <legend className="auth-sr-only">Timer durations</legend>
+        <legend className="auth-sr-only">{t("Timer durations")}</legend>
 
         <div className="focus-field">
-          <label htmlFor="focus-minutes">Focus · 1–180 min</label>
+          <label htmlFor="focus-minutes">{t("Focus · 1–180 min")}</label>
           <input
             id="focus-minutes"
             type="number"
@@ -193,7 +192,7 @@ function SettingsForm({ settings, disabled, onSave }: SettingsFormProps) {
         </div>
 
         <div className="focus-field">
-          <label htmlFor="short-break-minutes">Short break · 1–60 min</label>
+          <label htmlFor="short-break-minutes">{t("Short break · 1–60 min")}</label>
           <input
             id="short-break-minutes"
             type="number"
@@ -208,7 +207,7 @@ function SettingsForm({ settings, disabled, onSave }: SettingsFormProps) {
         </div>
 
         <div className="focus-field">
-          <label htmlFor="long-break-minutes">Long break · 1–120 min</label>
+          <label htmlFor="long-break-minutes">{t("Long break · 1–120 min")}</label>
           <input
             id="long-break-minutes"
             type="number"
@@ -225,20 +224,18 @@ function SettingsForm({ settings, disabled, onSave }: SettingsFormProps) {
 
       {validationError && (
         <p className="focus-message focus-error" role="alert">
-          {validationError}
+          {t(validationError)}
         </p>
       )}
 
       <div className="focus-settings-actions">
-        <p className="muted">Your durations are saved to your account.</p>
+        <p className="muted">{t("Your durations are saved to your account.")}</p>
 
         <button
           className="button button-primary focus-save-button"
           type="submit"
           disabled={disabled}
-        >
-          Save durations
-        </button>
+        > {t("Save durations")} </button>
       </div>
     </form>
   );
@@ -256,18 +253,13 @@ function SoundControls() {
 
   return (
     <section className="card focus-center" aria-labelledby="focus-sound-title">
-      <h2 id="focus-sound-title">A gentle reminder</h2>
+      <h2 id="focus-sound-title">{t("A gentle reminder")}</h2>
 
-      <p className="muted focus-settings-description">
-        A little melody to mark your progress. Sound preferences are saved on
-        this device.
-      </p>
+      <p className="muted focus-settings-description"> {t("A little melody to mark your progress. Sound preferences are saved on this device.")} </p>
 
       <div className="focus-sound-controls">
         <div className="focus-sound-item">
-          <span className="focus-control-label" id="focus-sound-toggle-label">
-            Session end sound
-          </span>
+          <span className="focus-control-label" id="focus-sound-toggle-label"> {t("Session end sound")} </span>
 
           <button
             className={`button ${
@@ -279,13 +271,13 @@ function SoundControls() {
             onClick={() => setEnabled(!enabled)}
           >
             <span aria-hidden="true">♪</span>
-            {enabled ? "Sound on" : "Sound off"}
+            {enabled ? t("Sound on") : t("Sound off")}
           </button>
         </div>
 
         <div className="focus-sound-item focus-volume">
           <div className="focus-volume-heading">
-            <label htmlFor="focus-sound-volume">Volume</label>
+            <label htmlFor="focus-sound-volume">{t("Volume")}</label>
             <span className="focus-volume-value">{percentage}%</span>
           </div>
 
@@ -300,16 +292,14 @@ function SoundControls() {
               value={percentage}
               style={rangeStyle}
               disabled={!enabled}
-              aria-valuetext={`${percentage} percent`}
+              aria-valuetext={t(`${percentage} percent`)}
               onChange={(event) => setVolume(Number(event.target.value) / 100)}
             />
           </div>
         </div>
 
         <div className="focus-sound-item">
-          <span className="focus-control-label" id="focus-sound-preview-label">
-            Hear the melody
-          </span>
+          <span className="focus-control-label" id="focus-sound-preview-label"> {t("Hear the melody")} </span>
 
           <button
             className="button button-secondary"
@@ -318,32 +308,27 @@ function SoundControls() {
             aria-describedby="focus-sound-preview-label"
             onClick={() => void preview()}
           >
-            <span aria-hidden="true">▷</span>
-            Preview sound
-          </button>
+            <span aria-hidden="true">▷</span> {t("Preview sound")} </button>
         </div>
       </div>
 
       <p className="focus-message" role="status">
         {!enabled
-          ? "Session sounds are off."
+          ? t("Session sounds are off.")
           : volume === 0
-            ? "Volume is set to zero."
+            ? t("Volume is set to zero.")
             : isReady
-              ? "Audio is ready for this visit."
-              : "Tap Preview sound to enable audio."}
+              ? t("Audio is ready for this visit.")
+              : t("Tap Preview sound to enable audio.")}
       </p>
 
       {error && (
         <p className="focus-message focus-error" role="alert">
-          {error}
+          {t(error)}
         </p>
       )}
 
-      <p className="section-footnote">
-        Keep the app open for sound alerts. Your browser may suspend audio when
-        the device is locked or the app is in the background.
-      </p>
+      <p className="section-footnote"> {t("Keep the app open for sound alerts. Your browser may suspend audio when the device is locked or the app is in the background.")} </p>
     </section>
   );
 }
@@ -368,12 +353,12 @@ export default function FocusCenter() {
   if (!timer) {
     return (
       <section className="card focus-center">
-        <h2>Focus Center</h2>
+        <h2>{t("Focus Center")}</h2>
 
         {error ? (
           <>
             <p className="focus-message focus-error" role="alert">
-              {error}
+              {t(error)}
             </p>
 
             <button
@@ -382,13 +367,11 @@ export default function FocusCenter() {
               disabled={isBusy}
               onClick={() => void refresh()}
             >
-              {isBusy ? "Connecting…" : "Try again"}
+              {isBusy ? t("Connecting…") : t("Try again")}
             </button>
           </>
         ) : (
-          <p className="muted" role="status">
-            Preparing your focus space…
-          </p>
+          <p className="muted" role="status"> {t("Preparing your focus space…")} </p>
         )}
       </section>
     );
@@ -401,12 +384,12 @@ export default function FocusCenter() {
   const currentMode = modes.find((mode) => mode.id === timer.mode);
 
   const statusLabel = isFinishing
-    ? "Finishing session…"
+    ? t("Finishing session…")
     : timer.status === "running"
-      ? "In progress"
+      ? t("In progress")
       : timer.status === "paused"
-        ? "Paused"
-        : "Ready when you are";
+        ? t("Paused")
+        : t("Ready when you are");
 
   async function handleModeChange(mode: FocusMode) {
     if (!timer || controlsDisabled || timer.mode === mode) {
@@ -455,7 +438,7 @@ export default function FocusCenter() {
     ) {
       setConfirmation(null);
       setNotice(
-        "Your timer changed while this dialog was open. Review it and try again.",
+        t("Your timer changed while this dialog was open. Review it and try again."),
       );
       return;
     }
@@ -474,7 +457,7 @@ export default function FocusCenter() {
       setConfirmation(null);
 
       if (!changed) {
-        setNotice("Review your current timer before trying again.");
+        setNotice(t("Review your current timer before trying again."));
       }
     } finally {
       setIsConfirming(false);
@@ -487,7 +470,7 @@ export default function FocusCenter() {
     const saved = await saveSettings(settings);
 
     if (saved) {
-      setNotice("Your timer durations have been saved.");
+      setNotice(t("Your timer durations have been saved."));
     }
 
     return saved;
@@ -508,8 +491,8 @@ export default function FocusCenter() {
       >
         <div className="section-heading">
           <div>
-            <p className="eyebrow">One thing at a time</p>
-            <h2 id="focus-center-title">Focus Center</h2>
+            <p className="eyebrow">{t("One thing at a time")}</p>
+            <h2 id="focus-center-title">{t("Focus Center")}</h2>
           </div>
 
           <button
@@ -518,14 +501,14 @@ export default function FocusCenter() {
             disabled={isBusy}
             onClick={() => void refresh()}
           >
-            {isBusy ? "Syncing…" : "Refresh"}
+            {isBusy ? t("Syncing…") : t("Refresh")}
           </button>
         </div>
 
         <div
           className="focus-mode-buttons"
           role="group"
-          aria-label="Timer mode"
+          aria-label={t("Timer mode")}
         >
           {modes.map((mode) => (
             <button
@@ -538,25 +521,25 @@ export default function FocusCenter() {
               disabled={controlsDisabled}
               onClick={() => void handleModeChange(mode.id)}
             >
-              {mode.label}
+              {t(mode.label)}
             </button>
           ))}
         </div>
 
         <div className="focus-timer-display">
-          <p className="eyebrow">{currentMode?.label}</p>
+          <p className="eyebrow">{t(currentMode?.label)}</p>
 
           <div
             className="focus-timer-value"
             role="timer"
-            aria-label={`${currentMode?.label} time remaining`}
+            aria-label={t(`${t(currentMode?.label)} time remaining`)}
             aria-live="off"
           >
             {formatTime(remainingMs)}
           </div>
 
           <p className="muted" role="status">
-            {statusLabel}
+            {t(statusLabel)}
           </p>
         </div>
 
@@ -566,7 +549,7 @@ export default function FocusCenter() {
             Math.min(timer.durationMs, timer.durationMs - remainingMs),
           )}
           max={timer.durationMs}
-          aria-label={`${currentMode?.label} progress`}
+          aria-label={t(`${t(currentMode?.label)} progress`)}
         />
 
         <div className="focus-controls">
@@ -579,9 +562,7 @@ export default function FocusCenter() {
                 setNotice("");
                 void sendCommand({ action: "start" });
               }}
-            >
-              Start
-            </button>
+            > {t("Start")} </button>
           )}
 
           {timer.status === "running" && (
@@ -593,9 +574,7 @@ export default function FocusCenter() {
                 setNotice("");
                 void sendCommand({ action: "pause" });
               }}
-            >
-              Pause
-            </button>
+            > {t("Pause")} </button>
           )}
 
           {timer.status === "paused" && (
@@ -607,9 +586,7 @@ export default function FocusCenter() {
                 setNotice("");
                 void sendCommand({ action: "resume" });
               }}
-            >
-              Resume
-            </button>
+            > {t("Resume")} </button>
           )}
 
           <button
@@ -617,44 +594,36 @@ export default function FocusCenter() {
             type="button"
             disabled={controlsDisabled || timer.status === "idle"}
             onClick={handleReset}
-          >
-            Reset
-          </button>
+          > {t("Reset")} </button>
         </div>
 
         {error && (
           <p className="focus-message focus-error" role="alert">
-            {error}
+            {t(error)}
           </p>
         )}
 
         <p className="focus-message" role="status">
-          {notice}
+          {t(notice)}
         </p>
 
         <div className="focus-session-summary">
           <span className="stat-value">
-            {new Intl.NumberFormat().format(timer.completedFocusCount)}
+            {new Intl.NumberFormat(locale()).format(timer.completedFocusCount)}
           </span>
-          <span className="muted">Completed focus sessions</span>
+          <span className="muted">{t("Completed focus sessions")}</span>
         </div>
 
-        <p className="section-footnote">
-          Focus ends with an automatic break. Every fourth focus earns a long
-          break. Start your next focus when you are ready.
-        </p>
+        <p className="section-footnote"> {t("Focus ends with an automatic break. Every fourth focus earns a long break. Start your next focus when you are ready.")} </p>
       </section>
 
       <section
         className="card focus-center"
         aria-labelledby="focus-settings-title"
       >
-        <h2 id="focus-settings-title">Make it your rhythm</h2>
+        <h2 id="focus-settings-title">{t("Make it your rhythm")}</h2>
 
-        <p className="muted focus-settings-description">
-          Choose your durations before starting. Reset an active or paused timer
-          to change them.
-        </p>
+        <p className="muted focus-settings-description"> {t("Choose your durations before starting. Reset an active or paused timer to change them.")} </p>
 
         <SettingsForm
           key={[
@@ -673,14 +642,14 @@ export default function FocusCenter() {
       <ConfirmDialog
         open={confirmation !== null}
         title={
-          isModeConfirmation ? `Switch to ${targetModeLabel}?` : "Start fresh?"
+          isModeConfirmation ? t(`Switch to ${targetModeLabel}?`) : t("Start fresh?")
         }
         description={
           isModeConfirmation
-            ? "Switching modes will reset your current timer. An unfinished focus session will not be added to your history."
-            : "This will reset your current timer. An unfinished focus session will not be added to your history. Your completed sessions stay saved."
+            ? t("Switching modes will reset your current timer. An unfinished focus session will not be added to your history.")
+            : t("This will reset your current timer. An unfinished focus session will not be added to your history. Your completed sessions stay saved.")
         }
-        confirmLabel={isModeConfirmation ? "Switch mode" : "Reset timer"}
+        confirmLabel={isModeConfirmation ? t("Switch mode") : t("Reset timer")}
         isSubmitting={isConfirming}
         confirmDisabled={controlsDisabled}
         onCancel={() => {

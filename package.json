@@ -18,7 +18,10 @@
     "lint:web": "npm run lint --workspace=apps/web",
     "preview:web": "npm run preview --workspace=apps/web",
     "start": "npm run start:api",
-    "start:api": "npm run start --workspace=apps/api"
+    "start:api": "npm run start --workspace=apps/api",
+    "test": "node --import ./tests/setup.mjs --import tsx --test tests/*.test.mjs apps/api/src/modules/auth/password.test.ts",
+    "typecheck:serverless": "tsc --noEmit -p api/tsconfig.json",
+    "check": "npm test && npm run lint:web && npm run typecheck:serverless && npm run build"
   },
   "keywords": [],
   "type": "commonjs"

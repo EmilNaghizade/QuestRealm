@@ -1,3 +1,4 @@
+import { t } from "../lib/i18n";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import "./install-prompt.css";
 
@@ -138,9 +139,7 @@ export default function InstallPrompt() {
         disabled={isInstalling}
         onClick={openInstructions}
       >
-        <span aria-hidden="true">↓</span>
-        Install app
-      </button>
+        <span aria-hidden="true">↓</span> {t("Install app")} </button>
 
       <dialog
         ref={dialogRef}
@@ -164,13 +163,10 @@ export default function InstallPrompt() {
           </button>
         </div>
 
-        <p className="eyebrow">Take your realm with you</p>
-        <h2 id={titleId}>QuestRealm on your home screen</h2>
+        <p className="eyebrow">{t("Take your realm with you")}</p>
+        <h2 id={titleId}>{t("QuestRealm on your home screen")}</h2>
 
-        <p className="install-description">
-          Open your quests and focus timer with one tap, directly from your
-          device.
-        </p>
+        <p className="install-description"> {t("Open your quests and focus timer with one tap, directly from your device.")} </p>
 
         {installEvent ? (
           <button
@@ -179,51 +175,43 @@ export default function InstallPrompt() {
             disabled={isInstalling}
             onClick={() => void handleInstall()}
           >
-            {isInstalling ? "Opening installer…" : "Install QuestRealm"}
+            {isInstalling ? "Opening installer…" : t("Install QuestRealm")}
           </button>
         ) : appleMobile ? (
           <ol className="install-steps">
             <li>
               <span aria-hidden="true">1</span>
-              <p>
-                Open your browser’s <strong>Share</strong> menu.
-              </p>
+              <p> {t("Open your browser’s")} <strong>{t("Share")}</strong> {t("menu.")} </p>
             </li>
             <li>
               <span aria-hidden="true">2</span>
-              <p>
-                Choose <strong>Add to Home Screen</strong>.
+              <p> {t("Choose")} <strong>{t("Add to Home Screen")}</strong>.
               </p>
             </li>
             <li>
               <span aria-hidden="true">3</span>
-              <p>
-                Keep the name <strong>QuestRealm</strong> and tap{" "}
-                <strong>Add</strong>.
+              <p> {t("Keep the name")} <strong>QuestRealm</strong> {t("and tap")}{" "}
+                <strong>{t("Add")}</strong>.
               </p>
             </li>
           </ol>
         ) : (
           <div className="install-browser-guide">
-            <p>
-              Open your browser’s menu and look for <strong>Install app</strong>
-              , <strong>Add to Home Screen</strong> or{" "}
-              <strong>Add to Dock</strong>.
+            <p> {t("Open your browser’s menu and look for")} <strong>{t("Install app")}</strong>
+              , <strong>{t("Add to Home Screen")}</strong> {t("or")}{" "}
+              <strong>{t("Add to Dock")}</strong>.
             </p>
-            <p>Available options depend on your browser and device.</p>
+            <p>{t("Available options depend on your browser and device.")}</p>
           </div>
         )}
 
         {error && (
           <p className="install-dialog-error" role="alert">
-            {error}
+            {t(error)}
           </p>
         )}
 
-        <p className="install-dialog-note">
-          Saving changes and earning quest rewards still require an internet
-          connection.
-        </p>
+        <p className="install-dialog-note"> {t("Saving changes and earning quest rewards still require an internet connection.")} </p>
       </dialog>
     </>
   );

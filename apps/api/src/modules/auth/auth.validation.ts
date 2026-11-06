@@ -40,6 +40,7 @@ export const registerSchema = z
     email: emailSchema,
     password: passwordSchema,
     timeZone: timeZoneSchema,
+    language: z.enum(["en", "az", "tr", "ru"]).default("en"),
   })
   .strict();
 
@@ -52,3 +53,5 @@ export const loginSchema = z
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export const profileSchema = z.object({ displayName: registerSchema.shape.displayName, timeZone: timeZoneSchema, language: z.enum(["en", "az", "tr", "ru"]) }).strict();

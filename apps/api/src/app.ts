@@ -14,6 +14,12 @@ import { focusRouter } from "./modules/focus/focus.routes.js";
 
 import { marketRouter } from "./modules/market/market.routes.js";
 
+import { kingdomsRouter } from "./modules/kingdoms/kingdoms.routes.js";
+
+import { achievementsRouter } from "./modules/achievements/achievements.routes.js";
+
+import { libraryRouter } from "./modules/library/library.routes.js";
+
 export const app = express();
 
 app.disable("x-powered-by");
@@ -70,6 +76,9 @@ app.use("/api/v1/characters", characterRouter);
 app.use("/api/v1/tasks", taskRouter);
 app.use("/api/v1/focus", focusRouter);
 app.use("/api/v1/market", marketRouter);
+app.use("/api/v1/kingdoms", kingdomsRouter);
+app.use("/api/v1/achievements", achievementsRouter);
+app.use("/api/v1/library", libraryRouter);
 
 if (env.NODE_ENV === "production") {
   const webDirectory = fileURLToPath(

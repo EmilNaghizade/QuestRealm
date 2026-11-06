@@ -5,10 +5,19 @@ export interface UserRecord {
   email: string;
   passwordHash: string;
   timeZone: string;
+  language: "en" | "az" | "tr" | "ru";
+  selectedReadingId:string|null;
   characterId: string | null;
   xp: number;
   gold: number;
   ownedItems: string[];
+  conqueredKingdoms: string[];
+  achievementIds: string[];
+  troopMilitia: number;
+  troopRangers: number;
+  troopKnights: number;
+  armyPower: number;
+  siege: { kingdomId: string; startedAt: Date; endsAt: Date } | null;
   equippedWeapon: string | null;
   equippedArmor: string | null;
   equippedCharm: string | null;
@@ -40,6 +49,8 @@ const userSchema = new Schema<UserRecord>(
       select: false,
     },
 
+    selectedReadingId:{type:String,default:null},
+    language: { type: String, enum: ["en", "az", "tr", "ru"], default: "en" },
     timeZone: {
       type: String,
       required: true,
@@ -58,6 +69,13 @@ const userSchema = new Schema<UserRecord>(
       min: 0,
     },
 
+    troopMilitia: { type: Number, default: 0, min: 0, max: 10000, validate: Number.isSafeInteger },
+    troopRangers: { type: Number, default: 0, min: 0, max: 10000, validate: Number.isSafeInteger },
+    troopKnights: { type: Number, default: 0, min: 0, max: 10000, validate: Number.isSafeInteger },
+    armyPower: { type: Number, default: 0, min: 0, validate: Number.isSafeInteger },
+    siege: { type: new Schema({ kingdomId: { type: String, required: true }, startedAt: { type: Date, required: true }, endsAt: { type: Date, required: true } }, { _id: false }), default: null },
+    achievementIds: { type: [String], default: [] },
+    conqueredKingdoms: { type: [String], default: [] },
     ownedItems: { type: [String], default: [] },
     equippedWeapon: { type: String, default: null },
     equippedArmor: { type: String, default: null },

@@ -1,3 +1,4 @@
+import { t } from "../../lib/i18n";
 import {
   useCallback,
   useEffect,
@@ -129,7 +130,7 @@ export default function FocusProvider({
         setError(
           requestError instanceof ApiError
             ? requestError.message
-            : "Unable to connect to your timer. Please try again.",
+            : t("Unable to connect to your timer. Please try again."),
         );
 
         if (
@@ -153,7 +154,7 @@ export default function FocusProvider({
             }
 
             setError(
-              "Your timer changed, but its current state could not be loaded. Please refresh.",
+              t("Your timer changed, but its current state could not be loaded. Please refresh."),
             );
           }
         }
@@ -266,7 +267,7 @@ export default function FocusProvider({
         setError(
           requestError instanceof ApiError
             ? requestError.message
-            : "Unable to connect to your timer. Please try again.",
+            : t("Unable to connect to your timer. Please try again."),
         );
       })
       .finally(() => {

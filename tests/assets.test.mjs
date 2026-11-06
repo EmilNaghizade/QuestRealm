@@ -1,0 +1,4 @@
+import {test}from'node:test';import assert from'node:assert/strict';import fs from'node:fs/promises';import sharp from'sharp';
+const root=new URL('../apps/web/',import.meta.url);
+test('PWA icon declarations point to correctly sized images',async()=>{const manifest=JSON.parse(await fs.readFile(new URL('public/manifest.webmanifest',root),'utf8'));assert.equal(manifest.display,'standalone');assert.ok(manifest.icons.some(icon=>icon.purpose==='maskable'));for(const icon of manifest.icons){const metadata=await sharp(await fs.readFile(new URL('public'+icon.src,root))).metadata();assert.equal(`${metadata.width}x${metadata.height}`,icon.sizes);}});
+test('favicon, Apple icon, service worker and offline page are present',async()=>{for(const path of ['public/favicon.svg','public/icons/apple-touch-icon-v4.png','public/sw.js','public/offline.html'])assert.ok((await fs.stat(new URL(path,root))).size>0);});

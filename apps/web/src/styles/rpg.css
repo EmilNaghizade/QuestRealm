@@ -118,3 +118,112 @@ progress::-webkit-progress-bar, progress::-webkit-progress-value, progress::-moz
   .conquest-preview { border-left: 0; border-top: 3px double var(--border); }
   .minimal-dashboard .timer-preview { font-size: 60px; }
 }
+
+.character-motto { margin: 20px 0 12px; padding-left: 18px; border-left: 2px solid var(--accent); font-family: var(--font-heading); font-size: 23px; font-style: italic; }
+.character-practice { max-width: 740px; margin-top: 18px; padding: 14px 18px; background: var(--primary-soft); font-size: 15px; }
+.character-practice strong { margin-right: 8px; }
+.market-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+.market-filters .button { font-size: 13px; min-height: 40px; }
+.market-filters .button[aria-pressed="true"] { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+.collection-empty { padding: 32px 0; }
+.collection-empty p { margin: 12px 0 18px; }
+.market-purchase-dialog { width: min(440px,calc(100vw - 32px)); max-height: calc(100dvh - 40px); overflow-y: auto; padding: 28px; border: 3px double var(--accent); border-radius: 3px; background: var(--surface-raised); color: var(--text); box-shadow: 0 16px 64px rgb(0 0 0 / 25%); }
+.market-purchase-dialog::backdrop { background: rgb(0 0 0 / 50%); }
+.market-purchase-dialog .muted { font-size: 15px; margin-top: 16px; }
+.market-purchase-dialog .quest-toolbar { margin-top: 24px; justify-content: flex-end; }
+.purchase-totals { margin: 24px 0; display: grid; gap: 12px; }
+.purchase-totals > div { display: flex; justify-content: space-between; gap: 16px; }
+.purchase-totals dt { color: var(--text-muted); }
+.purchase-totals dd { margin: 0; font-family: var(--font-game-ui); font-size: 14px; }
+
+.kingdoms-page { border-top: 3px double var(--border); padding-top: 26px; }
+.realm-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 40px; align-items: center; }
+.realm-summary progress { grid-column: 1 / -1; height: 7px; }
+.realm-summary .eyebrow { font-size: 10px; }
+.realm-summary .muted { font-size: 15px; }
+.realm-notice:not(:empty) { margin-top: 24px; padding: 18px; border: 3px double var(--accent); background: var(--primary-soft); color: var(--primary); animation: page-arrive 350ms ease-out both; }
+.kingdom-list { list-style: none; padding: 0; margin: 28px 0 0; }
+.kingdom-region { display: grid; grid-template-columns: 44px minmax(0,1fr) auto; align-items: start; gap: 24px; padding: 30px 0; border-bottom: 1px solid var(--border); }
+.kingdom-number { display: grid; place-items: center; width: 40px; height: 44px; border: 3px double var(--border); color: var(--accent); font-family: var(--font-game-ui); font-size: 16px; }
+.kingdom-copy h2 { margin-top: 8px; }
+.kingdom-copy > .muted { margin-top: 12px; max-width: 620px; font-size: 15px; }
+.kingdom-copy progress { height: 5px; margin-top: 20px; max-width: 420px; }
+.kingdom-requirement { font-family: var(--font-game-ui); font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+.kingdom-action { display: grid; gap: 12px; justify-items: end; align-self: center; }
+.kingdom-action > span { font-family: var(--font-game-ui); color: var(--accent); font-size: 13px; }
+.kingdom-action .button { min-width: 126px; }
+.kingdom-conquered .kingdom-number { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+.kingdom-ready .market-slot { color: var(--primary); }
+.conquest-preview progress { margin-top: 16px; height: 6px; }
+@media (max-width: 650px) { .realm-summary { grid-template-columns: 1fr; } .kingdom-region { grid-template-columns: 36px minmax(0,1fr); gap: 16px; } .kingdom-number { width: 34px; height: 40px; } .kingdom-action { grid-column: 2; display: flex; justify-content: space-between; align-items: center; gap: 12px; } .kingdom-action > span { font-size: 11px; } .kingdom-requirement { line-height: 1.8; } }
+
+.army-camp { margin-top: 28px; padding-block: 26px; border-block: 3px double var(--border); }
+.army-power, .troop-count, .troop-meta { font-family: var(--font-game-ui); font-size: 12px; color: var(--text-muted); }
+.recruitment-heading { display: flex; gap: 24px; align-items: center; justify-content: space-between; margin-top: 18px; font-size: 14px; }
+.recruitment-heading label { display: flex; gap: 10px; align-items: center; white-space: nowrap; }
+.recruitment-heading select { min-height: 44px; border: 1px solid var(--border); background: var(--surface-raised); color: var(--text); padding: 6px 10px; font: inherit; }
+.troop-list { list-style: none; margin: 22px 0 0; padding: 0; }
+.troop-list li { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+.troop-list li:last-child { border: 0; }
+.troop-list h3 { font-size: 22px; }
+.troop-list .muted { font-size: 14px; margin-top: 8px; }
+.troop-meta { margin-top: 10px; line-height: 1.8; }
+.siege-panel { display: grid; grid-template-columns: minmax(0,1fr) auto auto; align-items: center; gap: 22px; margin-top: 28px; padding: 24px; border: 3px double var(--accent); background: var(--surface-raised); }
+.siege-panel .muted { font-size: 14px; margin-top: 10px; }
+.siege-panel progress { grid-column: 1 / -1; height: 6px; }
+.siege-timer { font-family: var(--font-game-ui); font-size: 28px; font-variant-numeric: tabular-nums; }
+@media (max-width: 700px) { .army-camp .section-heading, .recruitment-heading { align-items: flex-start; flex-direction: column; gap: 14px; } .troop-list li { grid-template-columns: 1fr; gap: 16px; } .troop-list .button { justify-self: start; } .siege-panel { grid-template-columns: 1fr; gap: 18px; padding: 20px; } .siege-panel progress { grid-column: auto; } }
+
+.sidebar { overflow-y: auto; }
+.achievements-page { border-top: 3px double var(--border); padding-top: 28px; display: grid; gap: 36px; }
+.streak-panel { padding: 24px; border: 3px double var(--accent); background: var(--surface-raised); }
+.streak-totals { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; margin: 24px 0; }
+.streak-totals dt { font-size: 13px; color: var(--text-muted); }
+.streak-totals dd { margin: 8px 0 0; font-family: var(--font-game-ui); font-size: 24px; }
+.streak-status { color: var(--primary); font-weight: 700; margin-bottom: 10px; }
+.streak-panel > .muted { font-size: 14px; }
+.streak-week { list-style: none; padding: 0; margin: 24px 0 12px; display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 12px; }
+.streak-day { display: grid; justify-items: center; gap: 10px; min-width: 0; font-size: 12px; color: var(--text-muted); }
+.streak-day-mark { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--border); color: var(--text-muted); font-size: 22px; }
+.streak-day-active .streak-day-mark { background: var(--primary-soft); color: var(--primary); border-color: var(--primary); }
+.streak-day[aria-current="date"] .streak-day-mark { outline: 2px solid var(--accent); outline-offset: 3px; }
+.achievement-timezone, .achievement-count, .achievement-progress { font-family: var(--font-game-ui); font-size: 11px; color: var(--text-muted); }
+.achievement-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; }
+.achievement { display: grid; grid-template-columns: 38px minmax(0,1fr); gap: 18px; padding: 26px 0; border-bottom: 1px solid var(--border); }
+.achievement h3 { font-size: 22px; margin-top: 6px; }
+.achievement .muted { font-size: 14px; margin-top: 10px; }
+.achievement progress { height: 5px; margin-top: 18px; }
+.achievement-progress { margin-top: 8px; }
+.achievement-seal { display: grid; place-items: center; width: 36px; height: 40px; border: 3px double var(--border); color: var(--text-muted); font-size: 22px; }
+.achievement-earned .achievement-seal { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.achievement-empty, .achievement-footnote { font-size: 14px; margin-top: 24px; }
+.achievement-shortcut { display: block; padding-top: 18px; border-top: 3px double var(--border); color: var(--primary); font-size: 14px; }
+@media (max-width: 700px) { .streak-panel { padding: 20px 16px; } .streak-totals { grid-template-columns: 1fr; gap: 14px; } .streak-totals > div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; } .streak-totals dd { margin: 0; font-size: 20px; } .streak-week { gap: 7px; } .streak-day-mark { width: 28px; height: 32px; } .streak-day time { font-size: 10px; } .achievement-list { grid-template-columns: 1fr; } .achievements-page > section > .section-heading { flex-wrap: wrap; } }
+
+.reading-library { border-top:3px double var(--border);padding-top:28px; }
+.reading-description { margin:16px 0;font-size:15px;max-width:740px; }
+.reading-selected { margin:20px 0;padding:16px;background:var(--primary-soft);font-size:15px; }
+.reading-selected a { text-decoration:underline; }
+.reading-editor { margin:24px 0;border:3px double var(--border);padding:22px;background:var(--surface-raised); }
+.reading-fields { display:grid;grid-template-columns:1fr 1fr;gap:20px;border:0;padding:20px 0 0;margin:0;min-width:0; }
+.reading-fields input,.reading-fields select,.reading-fields textarea,.reading-search input { width:100%;min-height:44px;border:1px solid var(--border);border-radius:2px;background:var(--surface);color:var(--text);font:inherit;font-size:16px;padding:10px 12px; }
+.reading-fields textarea { resize:vertical; }
+.reading-wide { grid-column:1 / -1; }
+.reading-search { display:flex;gap:10px;margin:22px 0 12px; }
+.reading-search input { min-width:0;flex:1; }
+.reading-list { list-style:none;padding:0;margin:0; }
+.reading-item { display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;padding:26px 0;border-bottom:1px solid var(--border); }
+.reading-item-selected { border-left:3px solid var(--accent);padding-left:18px; }
+.reading-copy h3 { font-size:25px;margin:8px 0;overflow-wrap:anywhere; }
+.reading-copy .muted { font-size:15px; }
+.reading-copy progress { height:6px;max-width:400px;margin-top:18px; }
+.reading-page-count { font-family:var(--font-game-ui);font-size:12px;color:var(--text-muted);margin:12px 0; }
+.reading-actions { display:flex;flex-direction:column;gap:10px;align-items:stretch;min-width:130px; }
+.reading-notes { margin-top:18px; }
+.reading-notes summary { color:var(--primary);cursor:pointer;font-size:14px; }
+.reading-notes p { white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;margin-top:12px; }
+.reading-delete { display:grid;gap:8px;font-size:14px;max-width:240px; }
+.reading-companion { display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:24px;padding:24px;border:3px double var(--border);background:var(--surface-raised); }
+.reading-companion h2 { font-size:25px;overflow-wrap:anywhere; }
+.reading-companion .muted { font-size:14px;margin-top:12px; }
+@media(max-width:650px){.reading-library>.section-heading { flex-wrap:wrap; }.reading-fields { grid-template-columns:1fr; }.reading-wide { grid-column:auto; }.reading-editor { padding:18px; }.reading-item { grid-template-columns:1fr;gap:18px; }.reading-actions { flex-direction:row;flex-wrap:wrap; }.reading-delete { flex-basis:100%;max-width:none; }.reading-companion { padding:20px; }.reading-search { flex-wrap:wrap; }}

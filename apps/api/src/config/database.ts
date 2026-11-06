@@ -7,6 +7,8 @@ import { TaskCompletion } from "../modules/tasks/task-completion.model.js";
 import { FocusTimer } from "../modules/focus/focus.model.js";
 import { FocusSession } from "../modules/focus/focus-session.model.js";
 
+import { Reading } from "../modules/library/reading.model.js";
+
 mongoose.set("bufferCommands", false);
 mongoose.set("autoCreate", false);
 mongoose.set("autoIndex", false);
@@ -34,6 +36,7 @@ export async function connectDatabase(): Promise<void> {
   await TaskCompletion.createIndexes();
   await FocusTimer.createIndexes();
   await FocusSession.createIndexes();
+  await Reading.createIndexes();
 
   console.info("Database indexes are ready.");
 }

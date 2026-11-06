@@ -9,6 +9,7 @@
     <meta name="theme-color" content="#202320" />
     <meta name="robots" content="noindex" />
 
+    <script defer src="/offline.js"></script>
     <title>Reconnect · QuestRealm</title>
 
     <style>
@@ -26,8 +27,21 @@
         --accent: #93681d;
       }
 
+      :root[data-theme="dark"] {
+          color-scheme: dark;
+
+          --background: #202320;
+          --surface: #292e29;
+          --text: #f4eedc;
+          --muted: #adb7ca;
+          --border: #344158;
+          --primary: #a4c39b;
+          --on-primary: #191d29;
+          --accent-soft: #373225;
+          --accent: #f0c977;
+      }
       @media (prefers-color-scheme: dark) {
-        :root {
+        :root:not([data-theme="light"]) {
           color-scheme: dark;
 
           --background: #202320;
@@ -55,15 +69,15 @@
         padding: 24px;
         background: var(--background);
         color: var(--text);
-        font-family: "Trebuchet MS", Arial, sans-serif;
+        font-family: Georgia, "Times New Roman", serif;
       }
 
       main {
         width: 100%;
         max-width: 460px;
         padding: 36px;
-        border: 1px solid var(--border);
-        border-radius: 22px;
+        border: 3px double var(--border);
+        border-radius: 3px;
         background: var(--surface);
         text-align: center;
       }
@@ -155,16 +169,16 @@
       <div class="mark" aria-hidden="true"><svg width="64" height="64" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#3d6242"/><path d="M32 31A13 13 0 1 1 36 20M21 25l6 6 11-11" fill="none" stroke="#f7f6f2" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 
       <p class="eyebrow">QuestRealm</p>
-      <h1>A moment to reconnect.</h1>
+      <h1 data-offline="title">A moment to reconnect.</h1>
 
-      <p class="description">
+      <p class="description" data-offline="description">
         QuestRealm couldn’t reach the network. Reconnect to load your account,
         quests, and focus timer.
       </p>
 
-      <a href="/#dashboard">Try again</a>
+      <a href="/#dashboard" data-offline="retry">Try again</a>
 
-      <p class="note">
+      <p class="note" data-offline="note">
         Saving changes and earning quest rewards require a connection.
       </p>
     </main>

@@ -1,0 +1,14 @@
+import {after,before,test} from 'node:test';
+import assert from 'node:assert/strict';
+import {once} from 'node:events';
+import {app} from '../apps/api/src/app.ts';
+let server,origin;
+before(async()=>{server=app.listen(0,'127.0.0.1');await once(server,'listening');origin=`http://127.0.0.1:${server.address().port}`;});
+after(async()=>{server.closeAllConnections();await new Promise(resolve=>server.close(resolve));});
+test('health is reachable without connecting to the database',async()=>{const response=await fetch(origin+'/api/v1/health');assert.equal(response.status,200);assert.equal((await response.json()).data.status,'ok');});
+test('readiness honestly reports an unavailable database',async()=>{const response=await fetch(origin+'/api/v1/ready');assert.equal(response.status,503);assert.equal((await response.json()).error.code,'DATABASE_UNAVAILABLE');});
+for(const route of ['auth/me','characters','tasks','focus','market','kingdoms','achievements','library','library/selected'])test(`unauthenticated GET ${route} is refused without leaking user data`,async()=>{const response=await fetch(origin+'/api/v1/'+route);assert.equal(response.status,401);assert.equal((await response.json()).error.code,'UNAUTHENTICATED');assert.match(response.headers.get('cache-control'),/no-store/);});
+for(const [method,route]of [['PATCH','auth/profile'],['DELETE','tasks'],['POST','market/oak-staff/buy'],['POST','kingdoms/army/recruit'],['POST','kingdoms/oakridge/siege'],['POST','library'],['PATCH','library/selected']])test(`${method} ${route} rejects a foreign origin`,async()=>{const response=await fetch(origin+'/api/v1/'+route,{method,headers:{Origin:'https://untrusted.invalid','Content-Type':'application/json'},body:'{}'});assert.equal(response.status,403);assert.equal((await response.json()).error.code,'ORIGIN_NOT_ALLOWED');});
+test('malformed JSON gets a controlled JSON error',async()=>{const response=await fetch(origin+'/api/v1/auth/register',{method:'POST',headers:{Origin:'http://localhost:5173','Content-Type':'application/json'},body:'{invalid'});assert.equal(response.status,400);assert.equal((await response.json()).error.code,'INVALID_JSON');});
+test('an oversized body is refused',async()=>{const response=await fetch(origin+'/api/v1/auth/register',{method:'POST',headers:{Origin:'http://localhost:5173','Content-Type':'application/json'},body:JSON.stringify({notes:'x'.repeat(40000)})});assert.equal(response.status,413);});
+test('unknown API paths return a controlled 404',async()=>{const response=await fetch(origin+'/api/v1/does-not-exist');assert.equal(response.status,404);assert.equal((await response.json()).error.code,'NOT_FOUND');});

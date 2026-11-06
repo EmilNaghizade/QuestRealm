@@ -1,3 +1,4 @@
+import { t, locale } from "../../lib/i18n";
 import { useEffect, useRef, useState } from "react";
 import { ApiError } from "../../lib/api";
 import { useFocus } from "./focus-context";
@@ -24,7 +25,7 @@ function getDateKey(timestamp: string, timeZone: string): string {
 }
 
 function getDayLabel(date: string): string {
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat(locale(), {
     weekday: "short",
     timeZone: "UTC",
   }).format(new Date(`${date}T12:00:00Z`));
@@ -81,8 +82,8 @@ function StatsContent({
         );
 
         if (unauthorized) {
-          setStatisticsError("Your session has expired.");
-          setHistoryError("Your session has expired.");
+          setStatisticsError(t("Your session has expired."));
+          setHistoryError(t("Your session has expired."));
           void checkSession();
           return;
         }
@@ -93,7 +94,7 @@ function StatsContent({
           setStatisticsError(
             getErrorMessage(
               statsResult.reason,
-              "Unable to load your focus statistics.",
+              t("Unable to load your focus statistics."),
             ),
           );
         }
@@ -106,7 +107,7 @@ function StatsContent({
           setHistoryError(
             getErrorMessage(
               historyResult.reason,
-              "Unable to load your focus history.",
+              t("Unable to load your focus history."),
             ),
           );
         }
@@ -175,7 +176,7 @@ function StatsContent({
       setHistoryError(
         getErrorMessage(
           error,
-          "Unable to load more sessions. Please try again.",
+          t("Unable to load more sessions. Please try again."),
         ),
       );
     } finally {
@@ -189,11 +190,11 @@ function StatsContent({
     }
   }
 
-  const numberFormatter = new Intl.NumberFormat("en-US", {
+  const numberFormatter = new Intl.NumberFormat(locale(), {
     maximumFractionDigits: 1,
   });
 
-  const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  const dateFormatter = new Intl.DateTimeFormat(locale(), {
     timeZone: historyTimeZone,
     month: "short",
     day: "numeric",
@@ -216,8 +217,8 @@ function StatsContent({
       >
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Small steps add up</p>
-            <h2 id="focus-stats-title">Your focus journey</h2>
+            <p className="eyebrow">{t("Small steps add up")}</p>
+            <h2 id="focus-stats-title">{t("Your focus journey")}</h2>
           </div>
 
           <button
@@ -226,19 +227,17 @@ function StatsContent({
             disabled={isLoading || isLoadingMore}
             onClick={onRefresh}
           >
-            {isLoading ? "Refreshing…" : "Refresh"}
+            {isLoading ? t("Refreshing…") : t("Refresh")}
           </button>
         </div>
 
         {isLoading && (
-          <p className="focus-stats-status muted" role="status">
-            Updating your focus statistics…
-          </p>
+          <p className="focus-stats-status muted" role="status"> {t("Updating your focus statistics…")} </p>
         )}
 
         {statisticsError && (
           <p className="focus-message focus-error" role="alert">
-            {statisticsError}
+            {t(statisticsError)}
           </p>
         )}
 
@@ -246,37 +245,37 @@ function StatsContent({
           <>
             <div className="focus-stat-cards">
               <div className="focus-stat-card">
-                <span className="focus-stat-label">Today’s focus</span>
+                <span className="focus-stat-label">{t("Today’s focus")}</span>
                 <strong className="focus-stat-number">
                   {numberFormatter.format(statistics.today.minutes)}
-                  <small>min</small>
+                  <small>{t("min")}</small>
                 </strong>
               </div>
 
               <div className="focus-stat-card">
-                <span className="focus-stat-label">Sessions today</span>
+                <span className="focus-stat-label">{t("Sessions today")}</span>
                 <strong className="focus-stat-number">
                   {numberFormatter.format(statistics.today.sessions)}
                 </strong>
               </div>
 
               <div className="focus-stat-card">
-                <span className="focus-stat-label">Last 7 days</span>
+                <span className="focus-stat-label">{t("Last 7 days")}</span>
                 <strong className="focus-stat-number">
                   {numberFormatter.format(statistics.week.minutes)}
-                  <small>min</small>
+                  <small>{t("min")}</small>
                 </strong>
               </div>
             </div>
 
             <div className="focus-chart-heading">
-              <h3>Your last 7 days</h3>
-              <span className="muted">Completed focus minutes</span>
+              <h3>{t("Your last 7 days")}</h3>
+              <span className="muted">{t("Completed focus minutes")}</span>
             </div>
 
             <ol
               className="focus-week-chart"
-              aria-label="Daily completed focus minutes"
+              aria-label={t("Daily completed focus minutes")}
             >
               {statistics.days.map((day) => {
                 const isToday = day.date === statistics.today.date;
@@ -289,7 +288,7 @@ function StatsContent({
                       isToday ? "focus-week-day-today" : ""
                     }`}
                     key={day.date}
-                    aria-label={`${day.date}: ${day.minutes} minutes, ${day.sessions} sessions`}
+                    aria-label={t(`${day.date}: ${day.minutes} minutes, ${day.sessions} sessions`)}
                   >
                     <span className="focus-week-value" aria-hidden="true">
                       {numberFormatter.format(day.minutes)}
@@ -313,9 +312,7 @@ function StatsContent({
             </ol>
 
             <p className="section-footnote">
-              Dates follow your account time zone: {statistics.timeZone}.
-              Sessions count toward the day they finish. Breaks are not
-              included.
+              {t("Dates follow your account time zone:")} {statistics.timeZone}{t(". Sessions count toward the day they finish. Breaks are not included.")}
             </p>
           </>
         )}
@@ -328,30 +325,26 @@ function StatsContent({
       >
         <div className="section-heading">
           <div>
-            <p className="eyebrow">A record of your progress</p>
-            <h2 id="focus-history-title">Session history</h2>
+            <p className="eyebrow">{t("A record of your progress")}</p>
+            <h2 id="focus-history-title">{t("Session history")}</h2>
           </div>
         </div>
 
         {historyError && (
           <p className="focus-message focus-error" role="alert">
-            {historyError}
+            {t(historyError)}
           </p>
         )}
 
         {isLoading && (
-          <p className="focus-stats-status muted" role="status">
-            Updating your session history…
-          </p>
+          <p className="focus-stats-status muted" role="status"> {t("Updating your session history…")} </p>
         )}
 
         {!isLoading && !historyError && sessions.length === 0 && (
           <div className="focus-history-empty">
             <span aria-hidden="true">◷</span>
-            <h3>Your first session is waiting.</h3>
-            <p className="muted">
-              Complete a focus session to begin your history.
-            </p>
+            <h3>{t("Your first session is waiting.")}</h3>
+            <p className="muted"> {t("Complete a focus session to begin your history.")} </p>
           </div>
         )}
 
@@ -363,7 +356,7 @@ function StatsContent({
               </span>
 
               <div className="focus-history-copy">
-                <h3>Focus completed</h3>
+                <h3>{t("Focus completed")}</h3>
 
                 <time dateTime={session.completedAt}>
                   {dateFormatter.format(new Date(session.completedAt))}
@@ -371,8 +364,7 @@ function StatsContent({
               </div>
 
               <span className="focus-history-duration">
-                {numberFormatter.format(session.durationMinutes)} min
-              </span>
+                {numberFormatter.format(session.durationMinutes)} {t("min")} </span>
             </li>
           ))}
         </ul>
@@ -385,7 +377,7 @@ function StatsContent({
               disabled={isLoading || isLoadingMore}
               onClick={() => void loadMore()}
             >
-              {isLoadingMore ? "Loading…" : "Load more"}
+              {isLoadingMore ? t("Loading…") : t("Load more")}
             </button>
           </div>
         )}
@@ -396,9 +388,7 @@ function StatsContent({
               className="button button-secondary"
               type="button"
               onClick={onRefresh}
-            >
-              Try again
-            </button>
+            > {t("Try again")} </button>
           </div>
         )}
       </section>

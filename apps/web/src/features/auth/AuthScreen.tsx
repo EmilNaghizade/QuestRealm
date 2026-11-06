@@ -1,3 +1,5 @@
+import LanguagePicker from "../../components/LanguagePicker";
+import { t, getLanguage } from "../../lib/i18n";
 import BrandLogo from "../../components/BrandLogo";
 import { useState, type FormEvent } from "react";
 import { ApiError } from "../../lib/api";
@@ -38,6 +40,7 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
         ? await register({
             ...credentials,
             displayName: displayName.trim(),
+            language: getLanguage(),
             timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
           })
         : await login(credentials);
@@ -48,7 +51,7 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
       setError(
         error instanceof ApiError
           ? error.message
-          : "Something went wrong. Please try again.",
+          : t("Something went wrong. Please try again."),
       );
     } finally {
       setIsSubmitting(false);
@@ -64,28 +67,20 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
 
   return (
     <main className="auth-page">
+      <div className="auth-language"><LanguagePicker/></div>
       <div className="auth-layout">
         <section className="auth-story" aria-labelledby="auth-story-title">
           <div className="brand"><BrandLogo/></div>
 
           <div className="auth-story-copy">
-            <span className="eyebrow">Your adventure awaits</span>
+            <span className="eyebrow">{t("Your adventure awaits")}</span>
 
-            <h1 id="auth-story-title">
-              A little progress,
-              <br />
-              every day.
-            </h1>
+            <h1 id="auth-story-title"> {t("A little progress,")} <br /> {t("every day.")} </h1>
 
-            <p className="muted">
-              Complete meaningful quests, make room for focus, and turn everyday
-              progress into your own adventure.
-            </p>
+            <p className="muted"> {t("Complete meaningful quests, make room for focus, and turn everyday progress into your own adventure.")} </p>
           </div>
 
-          <p className="auth-story-footer">
-            Every great kingdom starts with one small step.
-          </p>
+          <p className="auth-story-footer"> {t("Every great kingdom starts with one small step.")} </p>
         </section>
 
         <section
@@ -93,34 +88,34 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
           aria-labelledby="auth-form-title"
         >
           <span className="badge">
-            {isRegister ? "A fresh beginning" : "Your next chapter"}
+            {isRegister ? t("A fresh beginning") : t("Your next chapter")}
           </span>
 
           <h2 id="auth-form-title">
-            {isRegister ? "Begin your adventure." : "Welcome back."}
+            {isRegister ? t("Begin your adventure.") : t("Welcome back.")}
           </h2>
 
           <p className="muted auth-form-description">
             {isRegister
-              ? "Create your account and start building your realm."
-              : "Your quests are waiting. Let’s make today count."}
+              ? t("Create your account and start building your realm.")
+              : t("Your quests are waiting. Let’s make today count.")}
           </p>
 
           <form onSubmit={handleSubmit} aria-busy={isSubmitting}>
             <fieldset className="auth-fields" disabled={isSubmitting}>
               <legend className="auth-sr-only">
-                {isRegister ? "Create an account" : "Sign in"}
+                {isRegister ? t("Create an account") : t("Sign in")}
               </legend>
 
               {isRegister && (
                 <div className="auth-field">
-                  <label htmlFor="displayName">Adventurer name</label>
+                  <label htmlFor="displayName">{t("Adventurer name")}</label>
 
                   <input
                     id="displayName"
                     name="displayName"
                     autoComplete="nickname"
-                    placeholder="What should we call you?"
+                    placeholder={t("What should we call you?")}
                     minLength={2}
                     maxLength={40}
                     value={displayName}
@@ -131,7 +126,7 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
               )}
 
               <div className="auth-field">
-                <label htmlFor="email">Email address</label>
+                <label htmlFor="email">{t("Email address")}</label>
 
                 <input
                   id="email"
@@ -147,7 +142,7 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
               </div>
 
               <div className="auth-field">
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password">{t("Password")}</label>
 
                 <input
                   id="password"
@@ -157,7 +152,7 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
                     isRegister ? "new-password" : "current-password"
                   }
                   placeholder={
-                    isRegister ? "At least 6 characters" : "Your password"
+                    isRegister ? t("At least 6 characters") : t("Your password")
                   }
                   minLength={6}
                   maxLength={128}
@@ -170,7 +165,7 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
 
               {error && (
                 <p className="auth-error" id="auth-error" role="alert">
-                  {error}
+                  {t(error)}
                 </p>
               )}
 
@@ -179,16 +174,16 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
                 type="submit"
               >
                 {isSubmitting
-                  ? "Please wait…"
+                  ? t("Please wait…")
                   : isRegister
-                    ? "Create account"
-                    : "Sign in"}
+                    ? t("Create account")
+                    : t("Sign in")}
               </button>
             </fieldset>
           </form>
 
           <p className="auth-switch">
-            {isRegister ? "Already an adventurer?" : "New to QuestRealm?"}
+            {isRegister ? t("Already an adventurer?") : t("New to QuestRealm?")}
 
             <button
               className="auth-text-button"
@@ -196,7 +191,7 @@ export default function AuthScreen({ onAuthenticated }: AuthScreenProps) {
               disabled={isSubmitting}
               onClick={switchMode}
             >
-              {isRegister ? "Sign in" : "Create an account"}
+              {isRegister ? t("Sign in") : t("Create an account")}
             </button>
           </p>
         </section>

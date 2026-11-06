@@ -1,3 +1,4 @@
+import { t } from "../../lib/i18n";
 import BrandLogo from "../../components/BrandLogo";
 import { useEffect, useState, type FormEvent } from "react";
 import { ApiError } from "../../lib/api";
@@ -47,7 +48,7 @@ export default function ChooseCharacter({
         setError(
           error instanceof ApiError
             ? error.message
-            : "Unable to load characters. Please try again.",
+            : t("Unable to load characters. Please try again."),
         );
       } finally {
         if (!controller.signal.aborted) {
@@ -83,7 +84,7 @@ export default function ChooseCharacter({
       setError(
         error instanceof ApiError
           ? error.message
-          : "Unable to save your character. Please try again.",
+          : t("Unable to save your character. Please try again."),
       );
     } finally {
       setIsSaving(false);
@@ -93,7 +94,7 @@ export default function ChooseCharacter({
   if (isLoading) {
     return (
       <main className="session-screen">
-        <p role="status">Gathering your adventurers…</p>
+        <p role="status">{t("Gathering your adventurers…")}</p>
       </main>
     );
   }
@@ -102,9 +103,9 @@ export default function ChooseCharacter({
     return (
       <main className="session-screen">
         <div className="card session-panel">
-          <h1>Let’s try again.</h1>
+          <h1>{t("Let’s try again.")}</h1>
           <p className="muted" role="alert">
-            {error || "No characters are available right now."}
+            {error || t("No characters are available right now.")}
           </p>
 
           <button
@@ -115,9 +116,7 @@ export default function ChooseCharacter({
               setIsLoading(true);
               setRetryCount((current) => current + 1);
             }}
-          >
-            Try again
-          </button>
+          > {t("Try again")} </button>
         </div>
       </main>
     );
@@ -127,21 +126,19 @@ export default function ChooseCharacter({
     <main className="character-page">
       <header className="character-page-header">
         <a className="character-brand" href="#dashboard"><BrandLogo/></a>
-        <h1>Choose your character.</h1>
-        <p className="muted">
-          A companion for your everyday progress.
-        </p>
+        <h1>{t("Choose your character.")}</h1>
+        <p className="muted"> {t("A companion for your everyday progress.")} </p>
       </header>
 
       <form onSubmit={handleSubmit} aria-busy={isSaving}>
         <fieldset className="character-options" disabled={isSaving}>
-          <legend className="auth-sr-only">Choose one character</legend>
+          <legend className="auth-sr-only">{t("Choose one character")}</legend>
 
           {characters.map((character) => (
             <label
-              className={`character-option ${
+              className={t(`character-option ${
                 selectedId === character.id ? "character-option-selected" : ""
-              }`}
+              }`)}
               key={character.id}
             >
               <input
@@ -155,12 +152,12 @@ export default function ChooseCharacter({
 
 
 
-              <span className="character-option-name">{character.name}</span>
+              <span className="character-option-name">{t(character.name)}</span>
 
-              <span className="character-role">{character.role}</span>
+              <span className="character-role">{t(character.role)}</span>
 
               <span className="character-description">
-                {character.description}
+                {t(character.description)}
               </span>
             </label>
           ))}
@@ -169,21 +166,18 @@ export default function ChooseCharacter({
         <div className="character-confirm">
           {error && (
             <p className="auth-error" role="alert">
-              {error}
+              {t(error)}
             </p>
           )}
 
-          <p className="muted">
-            All adventurers start equally. This choice sets your identity, not
-            your rewards. Character changes are not available yet.
-          </p>
+          <p className="muted"> {t("All adventurers start equally. This choice sets your identity, not your rewards. Character changes are not available yet.")} </p>
 
           <button
             className="button button-primary"
             type="submit"
             disabled={!selectedId || isSaving}
           >
-            {isSaving ? "Preparing your journey…" : "Begin my adventure"}
+            {isSaving ? t("Preparing your journey…") : t("Begin my adventure")}
           </button>
         </div>
       </form>

@@ -1,3 +1,4 @@
+import { t } from "../../lib/i18n";
 import {
   useCallback,
   useEffect,
@@ -68,7 +69,7 @@ export default function FocusSoundProvider({
   const unlockAudio = useCallback(async (): Promise<boolean> => {
     try {
       if (!window.AudioContext) {
-        setError("Your browser does not support timer sounds.");
+        setError(t("Your browser does not support timer sounds."));
         return false;
       }
 
@@ -109,13 +110,13 @@ export default function FocusSoundProvider({
       if (ready) {
         setError("");
       } else {
-        setError("Tap Preview sound to enable audio in this browser.");
+        setError(t("Tap Preview sound to enable audio in this browser."));
       }
 
       return ready;
     } catch {
       setIsReady(false);
-      setError("Audio could not start. Tap Preview sound to try again.");
+      setError(t("Audio could not start. Tap Preview sound to try again."));
 
       return false;
     }
@@ -270,7 +271,7 @@ export default function FocusSoundProvider({
     if (audioRef.current?.state === "running") {
       playMelody();
     } else {
-      setError("A session ended. Tap Preview sound to enable future alerts.");
+      setError(t("A session ended. Tap Preview sound to enable future alerts."));
     }
   }, [completionEvent, playMelody]);
 

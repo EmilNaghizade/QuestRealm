@@ -4,7 +4,7 @@ A gamified productivity PWA that turns everyday progress into an adventure.
 
 Complete quests, earn XP and gold, develop your character, and build consistent focus habits with a persistent Pomodoro timer.
 
-> Actively developed. The productivity features are implemented; the equipment, shop, army, and kingdom systems are planned next.
+> Actively developed. Quests, focus, reading, character equipment, the market, armies, sieges, achievements, and four interface languages are implemented. Social features remain on the roadmap.
 
 ## Features
 
@@ -28,12 +28,22 @@ Complete quests, earn XP and gold, develop your character, and build consistent 
 - End-of-session melody with volume and sound controls.
 - Daily focus totals, a seven-day chart, and paginated history.
 
+### Realm and reading
+
+- Text-based character stories and class-specific equipment.
+- Gold-based market, persistent inventory, and equipment slots.
+- Sequential kingdom conquest, recruitable troops, and server-timed sieges.
+- Permanent achievements and daily activity streaks.
+- Personal book/article library with notes, page tracking, and Focus selection.
+
 ### Account and interface
 
 - Registration, login, and logout.
 - Fixed 30-day sessions using HttpOnly cookies.
 - Six selectable character classes.
-- Light and dark themes.
+- Profile/name/time zone settings.
+- English (default), Azerbaijani, Turkish, and Russian, with saved language preferences.
+- Light and dark RPG journal themes.
 - Responsive layout with mobile navigation.
 - App manifest, home-screen icons, and installation guidance.
 - Offline connection notice and a dedicated fallback page.
@@ -126,10 +136,12 @@ During local development, Vite proxies `/api` requests to the API on port `4000`
 ## Checks and builds
 
 ```bash
-npm run lint:web
-npm run typecheck:api
-npm run build
+npm run check
 ```
+
+This runs the persistent tests, frontend lint, Vercel handler type check, and production builds. Tests use an isolated dummy database configuration and model mocks; HTTP tests open only a local ephemeral port. Run `npm test` for the tests alone.
+
+For environment configuration and staging validation, see [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
 
 For the standalone production server:
 
@@ -167,19 +179,19 @@ QuestRealm can be added to the home screen on supported devices.
 
 An internet connection is required to save changes, synchronize the timer, and earn quest rewards.
 
-The service worker caches only the dedicated offline fallback page. It does not cache API responses or account data.
+The service worker caches only the dedicated offline fallback page and its small translation script. It does not cache API responses or account data.
 
 Sound alerts depend on browser permissions and activity. They are not guaranteed while the app is closed, suspended, or the device is locked.
 
 ## Roadmap
 
-- [ ] Layered 2D characters with visible equipped items.
-- [ ] Character-specific outfits and equipment.
-- [ ] Shop, inventory, and equipment management.
-- [ ] XP-based kingdom conquest.
-- [ ] Recruitable troops and siege mechanics.
-- [ ] Focus reading library.
-- [ ] Azerbaijani, Turkish, and Russian translations.
+- [x] Text-based characters and class-specific equipment.
+- [x] Shop, inventory, and equipment management.
+- [x] XP-based kingdom conquest.
+- [x] Recruitable troops and timed sieges.
+- [x] Focus reading library.
+- [x] Profile, settings, and four interface languages.
+- [x] Achievements and daily streak tracking.
 - [ ] Friends and shared activities.
 
 ## Author

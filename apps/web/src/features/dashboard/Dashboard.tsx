@@ -1,3 +1,9 @@
+import LibraryPage from "../library/LibraryPage";
+import AchievementsPage from "../achievements/AchievementsPage";
+import AccountPage from "../account/AccountPage";
+import { t, locale } from "../../lib/i18n";
+import KingdomsPage from "../kingdoms/KingdomsPage";
+import KingdomPreview from "../kingdoms/KingdomPreview";
 import { getPageFromHash } from "../../lib/navigation";
 import BrandLogo from "../../components/BrandLogo";
 import { useEffect, useRef, useState } from "react";
@@ -18,6 +24,7 @@ type DashboardProps = {
   user: AuthUser;
   onSessionExpired: () => void;
   onBalanceChanged: (balance: PlayerBalance) => void;
+  onProfileChanged: (user: AuthUser) => void;
 };
 
 function initialTheme(): Theme {
@@ -87,30 +94,36 @@ function FocusPreview() {
     return () => controller.abort();
   }, [completionEvent]);
   const seconds = Math.ceil(Math.max(0, remainingMs) / 1000);
-  const time = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+  const time = t(
+    `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`,
+  );
   const running = timer?.status === "running";
   const paused = timer?.status === "paused";
   return (
     <section className="card focus-card" aria-labelledby="focus-preview-title">
-      <h2 id="focus-preview-title">Focus</h2>
+      <h2 id="focus-preview-title">{t("Focus")}</h2>
       {timer ? (
         <>
           <div
             className="timer-preview"
             role="timer"
-            aria-label="Time remaining"
+            aria-label={t("Time remaining")}
             aria-live="off"
           >
             {time}
           </div>
           <p className="focus-caption">
-            {timer.mode !== "focus" ? "Break · " : ""}
-            {running ? "In progress" : paused ? "Paused" : "Ready when you are"}
+            {timer.mode !== "focus" ? t("Break · ") : ""}
+            {running
+              ? t("In progress")
+              : paused
+                ? t("Paused")
+                : t("Ready when you are")}
           </p>
         </>
       ) : (
         <p className="focus-caption" role="status">
-          {error ? "Open Focus to reconnect." : "Preparing your timer…"}
+          {error ? t("Open Focus to reconnect.") : t("Preparing your timer…")}
         </p>
       )}
       <button
@@ -124,22 +137,23 @@ function FocusPreview() {
         }
       >
         <span aria-hidden="true">{running ? "Ⅱ" : "▶"}</span>
-        {running ? "Pause" : paused ? "Resume" : "Start"}{" "}
+        {running ? t("Pause") : paused ? t("Resume") : t("Start")}{" "}
         {timer?.mode === "focus" ? "focus" : "timer"}
       </button>
       {error && (
         <p className="task-error" role="alert">
-          {error}
+          {t(error)}
         </p>
       )}
       {stats && (
         <p className="focus-today">
-          Today&nbsp; {stats.today.minutes} min · {stats.today.sessions}{" "}
-          sessions
+          {t("Today")} {stats.today.minutes} {t("min")} · {stats.today.sessions}{" "}
+          {t("sessions")}{" "}
         </p>
       )}
       <a className="focus-details-link" href="#focus">
-        Timer settings & history →
+        {" "}
+        {t("Timer settings & history →")}{" "}
       </a>
     </section>
   );
@@ -149,16 +163,19 @@ export default function Dashboard({
   user,
   onSessionExpired,
   onBalanceChanged,
+  onProfileChanged,
 }: DashboardProps) {
   const [theme, setTheme] = useState<Theme>(initialTheme);
-  const [page, setPage] = useState(() => getPageFromHash(window.location.hash));  const { progression } = user;
+  const [page, setPage] = useState(() => getPageFromHash(window.location.hash));
+  const { progression } = user;
   const sequence = useRef(0);
   const [rewardMoment, setRewardMoment] = useState<RewardMoment | null>(null);
   const [levelMoment, setLevelMoment] = useState<{
     level: number;
     sequence: number;
   } | null>(null);
-  const format = (value: number) => new Intl.NumberFormat().format(value);
+  const format = (value: number) =>
+    new Intl.NumberFormat(locale()).format(value);
   const toggleTheme = () =>
     setTheme((current) => (current === "light" ? "dark" : "light"));
   useEffect(() => {
@@ -177,42 +194,73 @@ export default function Dashboard({
   }, [theme]);
   return (
     <div className="app-shell">
-      <aside className="sidebar" aria-label="Application sidebar">
+      <aside className="sidebar" aria-label={t("Application sidebar")}>
         <a className="brand" href="#dashboard">
           <BrandLogo />
         </a>
-        <nav className="navigation" aria-label="Main navigation">
+        <nav className="navigation" aria-label={t("Main navigation")}>
           <a
             className={`navigation-item ${page === "dashboard" ? "navigation-item-active" : ""}`}
             href="#dashboard"
             aria-current={page === "dashboard" ? "page" : undefined}
           >
-            <NavigationIcon kind="today" />
-            Today
+            <NavigationIcon kind="today" /> {t("Today")}{" "}
           </a>
           <a
             className={`navigation-item ${page === "focus" ? "navigation-item-active" : ""}`}
             href="#focus"
             aria-current={page === "focus" ? "page" : undefined}
           >
-            <NavigationIcon kind="focus" />
-            Focus
+            <NavigationIcon kind="focus" /> {t("Focus")}{" "}
           </a>
           <a
             className={`navigation-item ${page === "character" ? "navigation-item-active" : ""}`}
             href="#character"
             aria-current={page === "character" ? "page" : undefined}
           >
-            <NavigationIcon kind="character" />
-            Character
+            <NavigationIcon kind="character" /> {t("Character")}{" "}
           </a>
-          <span
-            className="navigation-item navigation-item-unavailable"
-            aria-disabled="true"
+          <a
+            className={`navigation-item ${page === "kingdoms" ? "navigation-item-active" : ""}`}
+            href="#kingdoms"
+            aria-current={page === "kingdoms" ? "page" : undefined}
           >
             <NavigationIcon kind="kingdoms" />
-            Kingdoms<small>Soon</small>
-          </span>
+            {t("Kingdoms")}
+          </a>
+          <a
+            className={`navigation-item ${page === "profile" ? "navigation-item-active" : ""}`}
+            href="#profile"
+            aria-current={page === "profile" ? "page" : undefined}
+          >
+            <NavigationIcon kind="character" />
+            {t("Profile")}
+          </a>
+          <a
+            className={`navigation-item ${page === "achievements" ? "navigation-item-active" : ""}`}
+            href="#achievements"
+            aria-current={page === "achievements" ? "page" : undefined}
+          >
+            <span aria-hidden="true">✦</span>
+            {t("Achievements")}
+          </a>
+
+          <a
+            className={`navigation-item ${page === "library" ? "navigation-item-active" : ""}`}
+            href="#library"
+            aria-current={page === "library" ? "page" : undefined}
+          >
+            <span aria-hidden="true">▤</span>
+            {t("Reading library")}
+          </a>
+<a
+            className={`navigation-item ${page === "settings" ? "navigation-item-active" : ""}`}
+            href="#settings"
+            aria-current={page === "settings" ? "page" : undefined}
+          >
+            <span aria-hidden="true">⚙</span>
+            {t("Settings")}
+          </a>
         </nav>
       </aside>
       <main className="main-content page-enter" id={page} key={page}>
@@ -220,60 +268,100 @@ export default function Dashboard({
           <div>
             <h1>
               {page === "focus"
-                ? "Focus"
+                ? t("Focus")
                 : page === "character"
-                  ? "Character"
-                  : "Today"}
+                  ? t("Character")
+                  : page === "kingdoms"
+                    ? t("Kingdoms")
+                    : page === "profile"
+                      ? t("Profile")
+                      : page === "settings"
+                        ? t("Settings")
+                        : page === "achievements"
+                          ? t("Achievements")
+                          : page === "library"
+                            ? t("Reading library")
+                            : t("Today")}
             </h1>
             <p className="muted">
               {page === "focus"
-                ? "One thing at a time."
+                ? t("One thing at a time.")
                 : page === "character"
-                  ? "Your progress, your adventure."
-                  : "A little progress, every day."}
+                  ? t("Your progress, your adventure.")
+                  : page === "kingdoms"
+                    ? t("Build a realm, one quest at a time.")
+                    : page === "profile" || page === "settings"
+                      ? t("Your account, your preferences.")
+                      : page === "achievements"
+                        ? t("Every small step leaves a mark.")
+                        : page === "library"
+                          ? t("A page at a time")
+                          : t("A little progress, every day.")}
             </p>
           </div>
           <button
             className="button button-secondary theme-button"
             type="button"
             onClick={toggleTheme}
-            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+            aria-label={t(
+              `Switch to ${theme === "light" ? "dark" : "light"} theme`,
+            )}
           >
             <span aria-hidden="true">{theme === "light" ? "☾" : "☀"}</span>
-            {theme === "light" ? "Dark theme" : "Light theme"}
+            {theme === "light" ? t("Dark theme") : t("Light theme")}
           </button>
         </header>
-        {page === "focus" ? (
-          <FocusPage />
+        {page === "library" ? (
+          <LibraryPage onSessionExpired={onSessionExpired} />
+        ) : page === "achievements" ? (
+          <AchievementsPage onSessionExpired={onSessionExpired} />
+        ) : page === "profile" || page === "settings" ? (
+          <AccountPage
+            key={page}
+            section={page}
+            user={user}
+            theme={theme}
+            onThemeChanged={setTheme}
+            onProfileChanged={onProfileChanged}
+            onSessionExpired={onSessionExpired}
+          />
+        ) : page === "focus" ? (
+          <FocusPage onSessionExpired={onSessionExpired} />
         ) : page === "character" ? (
           <CharacterPage
             user={user}
             onSessionExpired={onSessionExpired}
             onBalanceChanged={onBalanceChanged}
           />
+        ) : page === "kingdoms" ? (
+          <KingdomsPage
+            onSessionExpired={onSessionExpired}
+            onBalanceChanged={onBalanceChanged}
+          />
         ) : (
           <>
-            <section className="player-strip" aria-label="Player progress">
+            <section className="player-strip" aria-label={t("Player progress")}>
               <span
                 key={progression.level}
                 className={`badge ${levelMoment?.level === progression.level ? "level-badge-new" : ""}`}
               >
-                Level {progression.level}
+                {" "}
+                {t("Level")} {progression.level}
               </span>
               <div className="player-xp">
                 <progress
-                  aria-label="Progress to next level"
+                  aria-label={t("Progress to next level")}
                   value={progression.xpIntoLevel}
                   max={progression.xpForNextLevel}
                 />
                 <span>
                   {format(progression.xpIntoLevel)} /{" "}
-                  {format(progression.xpForNextLevel)} XP
+                  {format(progression.xpForNextLevel)} {t("XP")}{" "}
                 </span>
               </div>
               <span className="player-gold">
                 <span className="gold-dot" aria-hidden="true" />{" "}
-                {format(user.gold)} gold
+                {format(user.gold)} {t("gold")}{" "}
               </span>
             </section>
             <div className="dashboard-grid minimal-dashboard">
@@ -299,14 +387,11 @@ export default function Dashboard({
               />
               <div className="dashboard-side">
                 <FocusPreview />
-                <section
-                  className="conquest-preview"
-                  aria-labelledby="conquest-title"
-                >
-                  <h2 id="conquest-title">Next conquest</h2>
-                  <p className="conquest-name">⚑ Kingdoms</p>
-                  <p className="muted">New lands are coming soon.</p>
-                </section>
+                <KingdomPreview xp={user.xp} />
+                <a className="achievement-shortcut" href="#achievements">
+                  <span aria-hidden="true">✦</span>{" "}
+                  {t("Achievements & daily streak")} →
+                </a>
               </div>
             </div>
           </>
